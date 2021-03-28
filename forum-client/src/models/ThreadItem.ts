@@ -4,7 +4,7 @@ export default class ThreadItem {
     public views: number,
     public points: number,
     public body: string,
-    public username: string,
+    public userName: string,
     public userId: string,
     public createdOn: Date,
     public threadId: string

@@ -7,7 +7,7 @@ export default class Thread {
     public views: number,
     public title: string,
     public body: string,
-    public username: string,
+    public userName: string,
     public userId: string,
     public points: number,
     public createdOn: Date,
