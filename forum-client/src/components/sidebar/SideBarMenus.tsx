@@ -3,12 +3,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppState } from "../../store/AppState";
 import { UserProfileSetType } from "../../store/user/Reducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faRegistered } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUser,
+  faRegistered,
+  faSignInAlt,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import Registration from "../auth/Registration";
+import Login from "../auth/Login";
+import Logout from "../auth/Logout";
 import "./SideBarMenu.css";
 
 const SideBarMenus = () => {
   const [showRegister, setShowRegister] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
+
   const user = useSelector((state: AppState) => state.user);
   const dispatch = useDispatch();
 
@@ -24,6 +34,14 @@ const SideBarMenus = () => {
 
   const onClickToggleRegister = () => {
     setShowRegister(!showRegister);
+  };
+
+  const onClickToggleLogin = () => {
+    setShowLogin(!showLogin);
+  };
+
+  const onClickToggleLogout = () => {
+    setShowLogout(!showLogout);
   };
 
   return (
@@ -42,6 +60,20 @@ const SideBarMenus = () => {
             isOpen={showRegister}
             onClickToggle={onClickToggleRegister}
           />
+        </li>
+        <li>
+          <FontAwesomeIcon icon={faSignInAlt} />
+          <span onClick={onClickToggleLogin} className="menu-name">
+            login
+          </span>
+          <Login isOpen={showLogin} onClickToggle={onClickToggleLogin} />
+        </li>
+        <li>
+          <FontAwesomeIcon icon={faSignOutAlt} />
+          <span onClick={onClickToggleLogout} className="menu-name">
+            logout
+          </span>
+          <Logout isOpen={showLogout} onClickToggle={onClickToggleLogout} />
         </li>
       </ul>
     </>
