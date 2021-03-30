@@ -1,23 +1,17 @@
-import { FC, useReducer, useState } from "react";
+import { FC, useReducer } from "react";
 import userReducer from "./common/UserReducer";
 import {
   PasswordTestResult,
   isPasswordValid,
 } from "../../common/validator/PasswordValidator";
 import ReactModal from "react-modal";
+import { ModalProps } from "../../types/ModalProps";
+import { allowSubmit } from "./common/Helpers";
+import "./Auth.css";
 
-export interface RegistrationProps {
-  isOpen: boolean;
-  onClickToggle: (
-    e: React.MouseEvent<Element, MouseEvent> | React.KeyboardEvent<Element>
-  ) => void;
-}
-
-const Registration: FC<RegistrationProps> = ({ isOpen, onClickToggle }) => {
-  const [isRegisterDisbled, setRegisterDiasbled] = useState(true);
-
+const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
   const [
-    { userName, password, email, passwordConfirm, resultMsg },
+    { userName, password, email, passwordConfirm, resultMsg, isSubmitDisabled },
     dispatch,
   ] = useReducer(userReducer, {
     userName: "raven",
@@ -25,20 +19,16 @@ const Registration: FC<RegistrationProps> = ({ isOpen, onClickToggle }) => {
     email: "admin@dzraven.com",
     passwordConfirm: "",
     resultMsg: "",
+    isSubmitDisabled: true,
   });
-
-  const allowRegister = (msg: string, setDisabled: boolean) => {
-    setRegisterDiasbled(setDisabled);
-    dispatch({ payload: msg, type: "resultMsg" });
-  };
 
   const onChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ payload: e.target.value, type: "userName" });
 
     if (!e.target.value) {
-      allowRegister("Username cannot be empty.", true);
+      allowSubmit(dispatch, "Username cannot be empty.", true);
     } else {
-      allowRegister("", false);
+      allowSubmit(dispatch, "", false);
     }
   };
 
@@ -46,9 +36,9 @@ const Registration: FC<RegistrationProps> = ({ isOpen, onClickToggle }) => {
     dispatch({ payload: e.target.value, type: "email" });
 
     if (!e.target.value) {
-      allowRegister("Email cannot be empty.", true);
+      allowSubmit(dispatch, "Email cannot be empty.", true);
     } else {
-      allowRegister("", false);
+      allowSubmit(dispatch, "", false);
     }
   };
 
@@ -58,7 +48,7 @@ const Registration: FC<RegistrationProps> = ({ isOpen, onClickToggle }) => {
     const passwordCheck: PasswordTestResult = isPasswordValid(e.target.value);
 
     if (!passwordCheck.isValid) {
-      allowRegister(passwordCheck.message, true);
+      allowSubmit(dispatch, passwordCheck.message, true);
       return;
     }
 
@@ -73,10 +63,10 @@ const Registration: FC<RegistrationProps> = ({ isOpen, onClickToggle }) => {
 
   const passwordsSame = (passwordVal: string, passwordConfirmVal: string) => {
     if (passwordVal !== passwordConfirmVal) {
-      allowRegister("Passwords do not match", true);
+      allowSubmit(dispatch, "Passwords do not match", true);
       return false;
     } else {
-      allowRegister("", false);
+      allowSubmit(dispatch, "", false);
       return true;
     }
   };
@@ -144,7 +134,7 @@ const Registration: FC<RegistrationProps> = ({ isOpen, onClickToggle }) => {
               <button
                 className="action-btn"
                 style={{ marginLeft: ".5em" }}
-                disabled={isRegisterDisbled}
+                disabled={isSubmitDisabled}
                 onClick={onClickRegister}>
                 Register
               </button>
