@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Nav.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { useWindowDimensions } from "../hooks/useWindowDimensions";
+import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 import ReactModal from "react-modal";
 import SideBarMenus from "./sidebar/SideBarMenus";
 

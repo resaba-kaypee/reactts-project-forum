@@ -1,0 +1,11 @@
+.auth-inputs {
+  min-height: 140px;
+  max-height: 75vh;
+  overflow-y: auto;
+  margin-bottom: 0.5em;
+}
+
+.logout-inputs {
+  min-height: 50px;
+  max-height: 75vh;
+}

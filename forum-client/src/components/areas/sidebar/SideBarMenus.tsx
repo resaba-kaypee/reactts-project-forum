@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { AppState } from "../../store/AppState";
-import { UserProfileSetType } from "../../store/user/Reducer";
+import { AppState } from "../../../store/AppState";
+import { UserProfileSetType } from "../../../store/user/Reducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -9,9 +9,9 @@ import {
   faSignInAlt,
   faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import Registration from "../auth/Registration";
-import Login from "../auth/Login";
-import Logout from "../auth/Logout";
+import Registration from "../../auth/Registration";
+import Login from "../../auth/Login";
+import Logout from "../../auth/Logout";
 import "./SideBarMenu.css";
 
 const SideBarMenus = () => {
