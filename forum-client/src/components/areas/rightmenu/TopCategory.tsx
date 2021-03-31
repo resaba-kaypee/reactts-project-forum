@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from "react";
 import CategoryThread from "../../../models/CategoryThread";
-
+import "./RightMenu.css";
 interface TopCategoryProps {
   topCategories: Array<CategoryThread>;
 }
