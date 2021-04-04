@@ -31,7 +31,7 @@ const initialValue = [
   },
 ];
 
-const LIST_TYPES = ["number-list", "bulleted-list"];
+const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
 interface RichEditorProps {
   existingBody?: string;
@@ -68,7 +68,7 @@ const RichEditor: FC<RichEditorProps> = ({ existingBody }) => {
         <MarkButton format="underline" icon="underline" />
         <MarkButton format="code" icon="code" />
         <BlockButton format="heading-one" icon="header1" />
-        <BlockButton format="block-qoute" icon="in_qoutes" />
+        <BlockButton format="block-quote" icon="in_quotes" />
         <BlockButton format="numbered-list" icon="list_numbered" />
         <BlockButton format="bulleted-list" icon="list_bulleted" />
       </Toolbar>
@@ -99,7 +99,7 @@ const MarkButton = ({ format, icon }: { format: string; icon: string }) => {
 
   if (icon === "italic") {
     thisIcon = faItalic;
-  } else if (icon === "underlined") {
+  } else if (icon === "underline") {
     thisIcon = faUnderline;
   } else if (icon === "code") {
     thisIcon = faCode;
