@@ -7,6 +7,7 @@ import { getThreadById } from "../../../services/DataService";
 import "./Thread.css";
 import ThreadCategory from "./ThreadCategory";
 import ThreadTitle from "./ThreadTitle";
+import ThreadBody from "./ThreadBody";
 
 const Thread = () => {
   const [thread, setThread] = useState<ThreadModel | undefined>();
@@ -35,6 +36,7 @@ const Thread = () => {
           />
           <ThreadCategory categoryName={thread?.category?.name} />
           <ThreadTitle title={thread?.title} />
+          <ThreadBody body={thread?.body} />
         </div>
       </div>
     </div>
