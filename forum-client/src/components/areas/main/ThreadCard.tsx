@@ -2,9 +2,11 @@ import React, { FC } from "react";
 import Thread from "../../../models/Thread";
 import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
 import { Link, useHistory } from "react-router-dom";
-import { faEye, faHeart, faReplyAll } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faReplyAll } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Main.css";
+import ThreadPointsBar from "../../points/ThreadPointsBar";
+import ThreadPointsInline from "../../points/ThreadPointsInline";
 
 interface ThreadCardProps {
   thread: Thread;
@@ -16,22 +18,6 @@ const ThreadCard: FC<ThreadCardProps> = ({ thread }) => {
 
   const onClickShowThread = (e: React.MouseEvent<HTMLDivElement>) => {
     history.push(`/thread/${thread.id}`);
-  };
-
-  const getPoints = (thread: Thread) => {
-    if (width <= 768) {
-      return (
-        <label style={{ marginRight: ".75em", marginTop: ".25em" }}>
-          {thread.points || 0}
-          <FontAwesomeIcon
-            className="points-icon"
-            icon={faHeart}
-            style={{ marginLeft: ".2em" }}
-          />
-        </label>
-      );
-    }
-    return null;
   };
 
   const getResponses = (thread: Thread) => {
@@ -50,25 +36,6 @@ const ThreadCard: FC<ThreadCardProps> = ({ thread }) => {
     return null;
   };
 
-  const getPointsNonMobile = () => {
-    if (width > 768) {
-      return (
-        <div className="threadcard-points">
-          <div className="thread-points-item">
-            {thread.points || 0}
-            <br />
-            <FontAwesomeIcon className="points-icon" icon={faHeart} />
-          </div>
-          <div className="thread-points-item" style={{ marginBottom: ".75em" }}>
-            {thread && thread.threadItems && thread.threadItems.length}
-            <br />
-            <FontAwesomeIcon className="points-icon" icon={faReplyAll} />
-          </div>
-        </div>
-      );
-    }
-    return null;
-  };
   return (
     <section className="panel threadcard-container">
       <div className="threadcard-txt-container">
@@ -103,13 +70,20 @@ const ThreadCard: FC<ThreadCardProps> = ({ thread }) => {
               </label>
             </span>
             <span>
-              {getPoints(thread)}
+              {width <= 768 ? (
+                <ThreadPointsInline points={thread?.points || 0} />
+              ) : null}
               {getResponses(thread)}
             </span>
           </div>
         </div>
       </div>
-      {getPointsNonMobile()}
+      <ThreadPointsBar
+        points={thread?.points || 0}
+        responseCount={
+          thread && thread.threadItems && thread.threadItems.length
+        }
+      />
     </section>
   );
 };
