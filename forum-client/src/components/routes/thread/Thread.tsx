@@ -8,6 +8,7 @@ import "./Thread.css";
 import ThreadCategory from "./ThreadCategory";
 import ThreadTitle from "./ThreadTitle";
 import ThreadBody from "./ThreadBody";
+import ThreadResponseBuilder from "./ThreadResponseBuilder";
 
 const Thread = () => {
   const [thread, setThread] = useState<ThreadModel | undefined>();
@@ -37,6 +38,8 @@ const Thread = () => {
           <ThreadCategory categoryName={thread?.category?.name} />
           <ThreadTitle title={thread?.title} />
           <ThreadBody body={thread?.body} />
+          <hr className="thread-section-divider" />
+          <ThreadResponseBuilder threadItems={thread?.threadItems} />
         </div>
       </div>
     </div>
