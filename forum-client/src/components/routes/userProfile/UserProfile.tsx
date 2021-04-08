@@ -8,7 +8,7 @@ import Nav from "../../areas/Nav";
 import Thread from "../../../models/Thread";
 import ThreadItem from "../../../models/ThreadItem";
 import PasswordComparison from "../../auth/common/PasswordComparison";
-import "UserProfile.css";
+import "./UserProfile.css";
 
 const UserProfile = () => {
   const [
