@@ -43,7 +43,7 @@ const Nav = () => {
         shouldCloseOnOverlayClick={true}>
         <SideBarMenus />
       </ReactModal>
-      <nav className="navigation">
+      <nav>
         {getMobileMenu()}
         <strong>SpecialForum</strong>
       </nav>
