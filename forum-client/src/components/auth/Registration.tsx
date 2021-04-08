@@ -1,13 +1,10 @@
 import { FC, useReducer } from "react";
 import userReducer from "./common/UserReducer";
-import {
-  PasswordTestResult,
-  isPasswordValid,
-} from "../../common/validator/PasswordValidator";
 import ReactModal from "react-modal";
 import { ModalProps } from "../../types/ModalProps";
 import { allowSubmit } from "./common/Helpers";
 import "./Auth.css";
+import PasswordComparison from "./common/PasswordComparison";
 
 const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
   const [
@@ -39,35 +36,6 @@ const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
       allowSubmit(dispatch, "Email cannot be empty.", true);
     } else {
       allowSubmit(dispatch, "", false);
-    }
-  };
-
-  const onChangePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ payload: e.target.value, type: "password" });
-
-    const passwordCheck: PasswordTestResult = isPasswordValid(e.target.value);
-
-    if (!passwordCheck.isValid) {
-      allowSubmit(dispatch, passwordCheck.message, true);
-      return;
-    }
-
-    passwordsSame(passwordConfirm, e.target.value);
-  };
-
-  const onChangePasswordConfirm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ payload: e.target.value, type: "passwordConfirm" });
-
-    passwordsSame(password, e.target.value);
-  };
-
-  const passwordsSame = (passwordVal: string, passwordConfirmVal: string) => {
-    if (passwordVal !== passwordConfirmVal) {
-      allowSubmit(dispatch, "Passwords do not match", true);
-      return false;
-    } else {
-      allowSubmit(dispatch, "", false);
-      return true;
     }
   };
 
@@ -111,22 +79,10 @@ const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
             />
           </div>
           <div>
-            <label htmlFor="password">password</label>
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={onChangePassword}
-            />
-          </div>
-          <div>
-            <label htmlFor="passwordconfirm">password confirmantion</label>
-            <input
-              name="passwordconfirm"
-              type="password"
-              value={passwordConfirm}
-              onChange={onChangePasswordConfirm}
+            <PasswordComparison
+              dispatch={dispatch}
+              password={password}
+              passwordConfirm={passwordConfirm}
             />
           </div>
           <div className="form-buttons">
