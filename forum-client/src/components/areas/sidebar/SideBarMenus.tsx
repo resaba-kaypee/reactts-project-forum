@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { AppState } from "../../../store/AppState";
-import { UserProfileSetType } from "../../../store/user/Reducer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -20,17 +20,6 @@ const SideBarMenus = () => {
   const [showLogout, setShowLogout] = useState(false);
 
   const user = useSelector((state: AppState) => state.user);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch({
-      type: UserProfileSetType,
-      payload: {
-        id: 1,
-        userName: "testUser",
-      },
-    });
-  }, [dispatch]);
 
   const onClickToggleRegister = () => {
     setShowRegister(!showRegister);
@@ -49,7 +38,9 @@ const SideBarMenus = () => {
       <ul>
         <li>
           <FontAwesomeIcon icon={faUser} />
-          <span className="menu-name">{user?.userName}</span>
+          <span className="menu-name">
+            <Link to={`/userprofile/${user?.id}`}>{user?.userName}</Link>
+          </span>
         </li>
         <li>
           <FontAwesomeIcon icon={faRegistered} />
