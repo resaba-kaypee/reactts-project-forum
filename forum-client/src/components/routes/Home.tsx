@@ -9,7 +9,7 @@ import "./Home.css";
 const Home: FC = () => {
   return (
     <div className="screen-root-container home-container">
-      <div>
+      <div className="navigation">
         <Nav />
       </div>
       <SideBar />
