@@ -9,6 +9,7 @@ import { Length } from "class-validator";
 import { User } from "./User";
 import { ThreadItem } from "./ThreadItem";
 import { ThreadPoint } from "./ThreadPoint";
+import { ThreadCategory } from "./ThreadCategory";
 
 @Entity({ name: "Threads" })
 export class Thread {
@@ -53,4 +54,7 @@ export class Thread {
 
   @OneToMany(() => ThreadPoint, (threadPoint) => threadPoint.thread)
   threadPoints: ThreadPoint[];
+
+  @ManyToOne(() => ThreadCategory, (threadCategory) => threadCategory.threads)
+  category: ThreadCategory;
 }
