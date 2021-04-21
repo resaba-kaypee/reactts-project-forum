@@ -51,7 +51,7 @@ export class User extends Auditable {
   @OneToMany(() => Thread, (thread) => thread.user)
   threads: Thread[];
 
-  @OneToMany(() => ThreadPoint, (ThreadPoint) => ThreadPoint.user)
+  @OneToMany(() => ThreadPoint, (threadPoint) => threadPoint.user)
   threadPoints: ThreadPoint[];
 
   @OneToMany(() => ThreadItemPoint, (threadItemPoint) => threadItemPoint.user)

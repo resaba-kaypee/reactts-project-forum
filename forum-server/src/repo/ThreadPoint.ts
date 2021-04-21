@@ -4,7 +4,7 @@ import { Thread } from "./Thread";
 import { Auditable } from "./Auditable";
 
 @Entity({ name: "ThreadPoints" })
-export class ThreadPointe extends Auditable {
+export class ThreadPoint extends Auditable {
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
   id: string;
 
