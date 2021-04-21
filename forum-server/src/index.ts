@@ -4,6 +4,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import { createConnection } from "typeorm";
+import { register } from "./repo/UserRepo";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -32,6 +33,9 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   const redisStore = new RedisStore({ client: redis });
 
+  // body parser
+  app.use(express.json({ limit: "10kb" }));
+
   app.use(
     session({
       store: redisStore,
@@ -49,8 +53,31 @@ const main = async () => {
     } as any)
   );
 
+  // router
   app.use(router);
 
+  // Register
+  router.post("/register", async (req, res, next) => {
+    try {
+      console.log("params:", req.body);
+      const userResult = await register(
+        req.body.email,
+        req.body.userName,
+        req.body.password
+      );
+      if (userResult && userResult.user) {
+        res.send(`new user created, userId: ${userResult.user.id}`);
+      } else if (userResult && userResult.messages) {
+        res.send(userResult.messages[0]);
+      } else {
+        next();
+      }
+    } catch (ex) {
+      res.send(ex.message);
+    }
+  });
+
+  // test route
   router.get("/", (req, res, next) => {
     if (!req.session!.userid) {
       req.session!.userid = req.query.userid;
