@@ -3,9 +3,10 @@ import { Length } from "class-validator";
 import { Thread } from "./Thread";
 import { ThreadPoint } from "./ThreadPoint";
 import { ThreadItemPoint } from "./ThreadItemPoints";
+import { Auditable } from "./Auditable";
 
 @Entity({ name: "Users" })
-export class User {
+export class User extends Auditable {
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
   id: string;
 
