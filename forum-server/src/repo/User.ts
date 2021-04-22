@@ -39,7 +39,7 @@ export class User extends Auditable {
     default: false,
     nullable: false,
   })
-  confirm: boolean;
+  confirmed: boolean;
 
   @Column("boolean", {
     name: "IsDisabled",
