@@ -4,7 +4,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import { createConnection } from "typeorm";
-import { register, login } from "./repo/UserRepo";
+import { register, login, logout } from "./repo/UserRepo";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -12,7 +12,7 @@ console.log(process.env.NODE_ENV);
 
 declare module "express-session" {
   export interface SessionData {
-    userid: any;
+    userId: any;
     loadedCount: number;
   }
 }
@@ -84,8 +84,8 @@ const main = async () => {
       const userResult = await login(req.body.userName, req.body.password);
 
       if (userResult && userResult.user) {
-        req.session!.userid = userResult.user?.id;
-        res.send(`user logged in, userId: ${req.session!.userid}`);
+        req.session!.userId = userResult.user?.id;
+        res.send(`user logged in, userId: ${req.session!.userId}`);
       } else if (userResult && userResult.messages) {
         res.send(userResult.messages[0]);
       } else {
@@ -96,18 +96,37 @@ const main = async () => {
     }
   });
 
+  // Logout
+  router.post("/logout", async (req, res, next) => {
+    try {
+      console.log("params:", req.body);
+
+      const msg = await logout(req.body.userName);
+
+      if (msg) {
+        req.session!.userId = null;
+        res.send(msg);
+      }
+
+      next();
+    } catch (ex) {
+      console.log(ex.message);
+      res.send(ex.message);
+    }
+  });
+
   // test route
   router.get("/", (req, res, next) => {
-    if (!req.session!.userid) {
-      req.session!.userid = req.query.userid;
-      console.log("userid is set");
+    if (!req.session!.userId) {
+      req.session!.userId = req.query.userId;
+      console.log("userId is set");
       req.session!.loadedCount = 0;
     } else {
       req.session!.loadedCount = Number(req.session!.loadedCount) + 1;
     }
 
     res.send(
-      `userid: ${req.session!.userid}, loadedCount:: ${
+      `userId: ${req.session!.userId}, loadedCount:: ${
         req.session!.loadedCount
       }`
     );
