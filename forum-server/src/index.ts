@@ -4,7 +4,7 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import { createConnection } from "typeorm";
-import { register } from "./repo/UserRepo";
+import { register, login } from "./repo/UserRepo";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -67,6 +67,25 @@ const main = async () => {
       );
       if (userResult && userResult.user) {
         res.send(`new user created, userId: ${userResult.user.id}`);
+      } else if (userResult && userResult.messages) {
+        res.send(userResult.messages[0]);
+      } else {
+        next();
+      }
+    } catch (ex) {
+      res.send(ex.message);
+    }
+  });
+
+  // Login
+  router.post("/login", async (req, res, next) => {
+    try {
+      console.log("params", req.body);
+      const userResult = await login(req.body.userName, req.body.password);
+
+      if (userResult && userResult.user) {
+        req.session!.userid = userResult.user?.id;
+        res.send(`user logged in, userId: ${req.session!.userid}`);
       } else if (userResult && userResult.messages) {
         res.send(userResult.messages[0]);
       } else {
