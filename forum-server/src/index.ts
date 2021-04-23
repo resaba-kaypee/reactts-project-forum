@@ -5,6 +5,7 @@ import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import { createConnection } from "typeorm";
 import { register, login, logout } from "./repo/UserRepo";
+import { createThread } from "./repo/ThreadRepo";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -109,6 +110,24 @@ const main = async () => {
       }
 
       next();
+    } catch (ex) {
+      console.log(ex.message);
+      res.send(ex.message);
+    }
+  });
+
+  router.post("/createthread", async (req, res, next) => {
+    try {
+      console.log("userId:", req.session);
+      console.log("body:", req.body);
+
+      const msg = await createThread(
+        req.session!.userId,
+        req.body.category,
+        req.body.title,
+        req.body.body
+      );
+      res.send(msg);
     } catch (ex) {
       console.log(ex.message);
       res.send(ex.message);
