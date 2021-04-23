@@ -5,7 +5,11 @@ import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import { createConnection } from "typeorm";
 import { register, login, logout } from "./repo/UserRepo";
-import { createThread } from "./repo/ThreadRepo";
+import {
+  createThread,
+  getThreadsByCategoryId,
+  getThreadById,
+} from "./repo/ThreadRepo";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -116,6 +120,7 @@ const main = async () => {
     }
   });
 
+  // Create Thread
   router.post("/createthread", async (req, res, next) => {
     try {
       console.log("userId:", req.session);
@@ -123,13 +128,51 @@ const main = async () => {
 
       const msg = await createThread(
         req.session!.userId,
-        req.body.category,
+        req.body.categoryId,
         req.body.title,
         req.body.body
       );
       res.send(msg);
     } catch (ex) {
       console.log(ex.message);
+      res.send(ex.message);
+    }
+  });
+
+  // Get Thread by id
+  router.post("/thread", async (req, res, next) => {
+    try {
+      const threadResult = await getThreadById(req.body.id);
+
+      if (threadResult && threadResult.entity) {
+        res.send(threadResult.entity.title);
+      } else if (threadResult && threadResult.messages) {
+        res.send(threadResult.messages[0]);
+      }
+    } catch (ex) {
+      console.log(ex);
+      res.send(ex.message);
+    }
+  });
+
+  // Get Thread by categoryId
+  router.post("/threadsbycategory", async (req, res, next) => {
+    try {
+      const threadResult = await getThreadsByCategoryId(req.body.categoryId);
+
+      if (threadResult && threadResult.entities) {
+        let items = "";
+
+        threadResult.entities.forEach((th) => {
+          items += th.title + ", ";
+        });
+
+        res.send(items);
+      } else if (threadResult && threadResult.messages) {
+        res.send(threadResult.messages[0]);
+      }
+    } catch (ex) {
+      console.log(ex);
       res.send(ex.message);
     }
   });
