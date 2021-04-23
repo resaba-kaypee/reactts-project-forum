@@ -2,7 +2,7 @@ import {
   isThreadTitleValid,
   isThreadBodyValid,
 } from "./../common/validator/ThreadValidators";
-import { QueryArrayResult } from "./QueryArrayResult";
+import { QueryArrayResult, QueryOneResult } from "./QueryArrayResult";
 import { Thread } from "./Thread";
 import { User } from "./User";
 import { ThreadCategory } from "./ThreadCategory";
@@ -29,4 +29,30 @@ export const createThread = async (
   if (!thread) return { messages: ["Failed to create thread."] };
 
   return { messages: ["Thread created successfully."] };
+};
+
+export const getThreadById = async (
+  id: string
+): Promise<QueryOneResult<Thread>> => {
+  const thread = await Thread.findOne({ id });
+
+  if (!thread) return { messages: ["Thread not found."] };
+
+  return { entity: thread };
+};
+
+export const getThreadsByCategoryId = async (
+  categoryId: string
+): Promise<QueryArrayResult<Thread>> => {
+  const threads = await Thread.createQueryBuilder("thread")
+    .where(`thread."categoryId" = :categoryId`, { categoryId })
+    .leftJoinAndSelect("thread.category", "category")
+    .orderBy("thread.createdOn", "DESC")
+    .getMany();
+
+  if (!threads) return { messages: ["Threads of category not foud."] };
+
+  console.log(threads);
+
+  return { entities: threads };
 };
