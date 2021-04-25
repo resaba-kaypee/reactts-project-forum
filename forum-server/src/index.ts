@@ -14,6 +14,9 @@ import {
   createThreadItem,
   getThreadItemsByThreadId,
 } from "./repo/ThreadItemRepos";
+import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
+import typeDefs from "./gql/typeDefs";
+import resolvers from "./gql/resolvers";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -239,8 +242,22 @@ const main = async () => {
     );
   });
 
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+  const apolloServer = new ApolloServer({
+    schema,
+    playground: {
+      // for offline use online
+      cdnUrl: `http://localhost:5678`,
+      version: "1.0.0",
+    },
+    context: ({ req, res }: any) => ({ req, res }),
+  });
+  apolloServer.applyMiddleware({ app, cors: false });
+
   app.listen({ port: process.env.SERVER_PORT }, () => {
-    console.log(`Server ready on port ${process.env.SERVER_PORT}`);
+    console.log(
+      `Server ready at http://localhost:${process.env.SERVER_PORT}${apolloServer.graphqlPath}`
+    );
   });
 };
 
