@@ -10,6 +10,10 @@ import {
   getThreadsByCategoryId,
   getThreadById,
 } from "./repo/ThreadRepo";
+import {
+  createThreadItem,
+  getThreadItemsByThreadId,
+} from "./repo/ThreadItemRepos";
 
 dotenv.config({ path: `${__dirname}/config.env` });
 
@@ -163,6 +167,7 @@ const main = async () => {
       if (threadResult && threadResult.entities) {
         let items = "";
 
+        // concat each title into a single string
         threadResult.entities.forEach((th) => {
           items += th.title + ", ";
         });
@@ -170,6 +175,46 @@ const main = async () => {
         res.send(items);
       } else if (threadResult && threadResult.messages) {
         res.send(threadResult.messages[0]);
+      }
+    } catch (ex) {
+      console.log(ex);
+      res.send(ex.message);
+    }
+  });
+
+  // Create ThreadItem
+  router.post("/createthreaditem", async (req, res, next) => {
+    try {
+      const msg = await createThreadItem(
+        req.session!.userId,
+        req.body.threadId,
+        req.body.body
+      );
+
+      res.send(msg);
+    } catch (ex) {
+      console.log(ex);
+      res.send(ex.message);
+    }
+  });
+
+  // Get ThreadItems by threadId(the actual thread not by category)
+  router.post("/threaditemsbythread", async (req, res, next) => {
+    try {
+      const threadItemResult = await getThreadItemsByThreadId(
+        req.body.threadId
+      );
+
+      if (threadItemResult && threadItemResult.entities) {
+        let items = "";
+
+        // concat each body to a single string
+        threadItemResult.entities.forEach((ti) => {
+          items = ti.body + ", ";
+        });
+        res.send(items);
+      } else if (threadItemResult && threadItemResult.messages) {
+        res.send(threadItemResult.messages[0]);
       }
     } catch (ex) {
       console.log(ex);
