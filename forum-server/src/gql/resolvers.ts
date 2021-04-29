@@ -3,7 +3,11 @@ import { createThread } from "./../repo/ThreadRepo";
 import { Thread } from "./../repo/Thread";
 import { IResolvers } from "apollo-server-express";
 import { QueryOneResult, QueryArrayResult } from "../repo/QueryArrayResult";
-import { getThreadById, getThreadsByCategoryId } from "../repo/ThreadRepo";
+import {
+  getThreadById,
+  getThreadsByCategoryId,
+  getThreadsLatest,
+} from "../repo/ThreadRepo";
 import { GqlContext } from "./GqlContext";
 
 const STANDARD_ERROR = "An error has occured";
@@ -69,6 +73,28 @@ const resolvers: IResolvers = {
 
         if (threads.entities) return { threads: threads.entities };
 
+        return {
+          messages: threads.messages ? threads.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    getThreadsLatest: async (
+      obj: any,
+      args: null,
+      ctx: GqlContext,
+      info: any
+    ): Promise<{ threads: Array<Thread> } | EntityResult> => {
+      let threads: QueryArrayResult<Thread>;
+      try {
+        threads = await getThreadsLatest();
+        if (threads.entities) {
+          return {
+            threads: threads.entities,
+          };
+        }
         return {
           messages: threads.messages ? threads.messages : [STANDARD_ERROR],
         };
