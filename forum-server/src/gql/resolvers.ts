@@ -1,3 +1,4 @@
+import { updateThreadPoint } from "./../repo/ThreadPointRepo";
 import { createThread } from "./../repo/ThreadRepo";
 import { Thread } from "./../repo/Thread";
 import { IResolvers } from "apollo-server-express";
@@ -101,6 +102,30 @@ const resolvers: IResolvers = {
         };
       } catch (ex) {
         console.log(ex);
+        throw ex;
+      }
+    },
+
+    updateThreadPoint: async (
+      obj: any,
+      args: { userId: string; threadId: string; increment: boolean },
+      ctx: GqlContext,
+      info: any
+    ): Promise<string> => {
+      let result = "";
+      try {
+        // TODOS remove the comment once the session is setup
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return "You must be logged in to set likes.";
+        // }
+        result = await updateThreadPoint(
+          // ctx.req.session!.userId,
+          args.userId,
+          args.threadId,
+          args.increment
+        );
+        return result;
+      } catch (ex) {
         throw ex;
       }
     },

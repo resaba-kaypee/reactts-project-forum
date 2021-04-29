@@ -120,6 +120,8 @@ const typeDefs = gql`
       title: String!
       body: String
     ): EntityResult
+    # updateThreadPoint(threadId: ID!, increment: Boolean!): String!
+    updateThreadPoint(userId: ID!, threadId: ID!, increment: Boolean!): String!
   }
 `;
 
