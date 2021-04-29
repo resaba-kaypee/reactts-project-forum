@@ -24,6 +24,13 @@ export class Thread extends Auditable {
   })
   views: number;
 
+  @Column("int", {
+    name: "Points",
+    default: 0,
+    nullable: false,
+  })
+  points: number;
+
   @Column("boolean", {
     name: "IsDisabled",
     default: false,
