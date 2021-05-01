@@ -9,6 +9,8 @@ import {
   getThreadsLatest,
 } from "../repo/ThreadRepo";
 import { GqlContext } from "./GqlContext";
+import { getThreadItemsByThreadId } from "../repo/ThreadItemRepos";
+import { ThreadItem } from "../repo/ThreadItem";
 
 const STANDARD_ERROR = "An error has occured";
 
@@ -32,6 +34,15 @@ const resolvers: IResolvers = {
         return "EntityResult";
       }
       return "ThreadArray";
+    },
+  },
+
+  ThreadItemArrayResult: {
+    __resolveType(obj: any, context: GqlContext, info: any) {
+      if (obj.messages) {
+        return "EntityResult";
+      }
+      return "ThreadItemArray";
     },
   },
 
@@ -97,6 +108,31 @@ const resolvers: IResolvers = {
         }
         return {
           messages: threads.messages ? threads.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    getThreadItemsByThreadId: async (
+      obj: AnimationTimeline,
+      args: { threadId: string },
+      ctx: GqlContext,
+      infor: any
+    ): Promise<{ threadItems: Array<ThreadItem> } | EntityResult> => {
+      let threadItems: QueryArrayResult<ThreadItem>;
+
+      try {
+        threadItems = await getThreadItemsByThreadId(args.threadId);
+        if (threadItems.entities) {
+          return {
+            threadItems: threadItems.entities,
+          };
+        }
+        return {
+          messages: threadItems.messages
+            ? threadItems.messages
+            : [STANDARD_ERROR],
         };
       } catch (ex) {
         throw ex;
