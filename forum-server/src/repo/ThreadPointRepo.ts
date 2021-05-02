@@ -30,9 +30,13 @@ export const updateThreadPoint = async (
     },
     relations: ["thread"],
   });
+
   await getManager().transaction(async (transactionEntityManager) => {
+    // if a user already voted
     if (existingPoint) {
+      // check if user want to upvote or downvote
       if (increment) {
+        // if upvote delete the existing downvote then add point
         if (existingPoint.isDecrement) {
           console.log("remove dec");
           await ThreadPoint.remove(existingPoint);
@@ -41,6 +45,7 @@ export const updateThreadPoint = async (
           await thread!.save();
         }
       } else {
+        // if downvote delete
         if (!existingPoint.isDecrement) {
           console.log("remove inc");
           await ThreadPoint.remove(existingPoint);
@@ -50,7 +55,7 @@ export const updateThreadPoint = async (
         }
       }
     } else {
-      console.log("new point");
+      console.log("new point made to thread");
       await ThreadPoint.create({
         thread,
         isDecrement: !increment,
