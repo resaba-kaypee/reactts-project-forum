@@ -1,3 +1,4 @@
+import { ThreadCategory } from "./../repo/ThreadCategory";
 import { updateThreadPoint } from "./../repo/ThreadPointRepo";
 import { createThread } from "./../repo/ThreadRepo";
 import { Thread } from "./../repo/Thread";
@@ -11,6 +12,9 @@ import {
 import { GqlContext } from "./GqlContext";
 import { getThreadItemsByThreadId } from "../repo/ThreadItemRepos";
 import { ThreadItem } from "../repo/ThreadItem";
+import { getAllCategories } from "../repo/ThreadCategoryRepos";
+import CategoryThread from "../repo/CategoryThread";
+import { getTopCategories } from "../repo/CategoryThreadRepo";
 
 const STANDARD_ERROR = "An error has occured";
 
@@ -135,6 +139,44 @@ const resolvers: IResolvers = {
             : [STANDARD_ERROR],
         };
       } catch (ex) {
+        throw ex;
+      }
+    },
+
+    getAllCategories: async (
+      obj: any,
+      args: null,
+      ctx: GqlContext,
+      info: any
+    ): Promise<Array<ThreadCategory> | EntityResult> => {
+      let categories: QueryArrayResult<ThreadCategory>;
+
+      try {
+        categories = await getAllCategories();
+
+        if (categories.entities) {
+          return categories.entities;
+        }
+        return {
+          messages: categories.messages
+            ? categories.messages
+            : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    getTopCategories: async (
+      obj: any,
+      args: null,
+      ctx: GqlContext,
+      info: any
+    ): Promise<Array<CategoryThread>> => {
+      try {
+        return await getTopCategories();
+      } catch (ex) {
+        console.log(ex);
         throw ex;
       }
     },
