@@ -8,10 +8,12 @@ const typeDefs = gql`
   }
 
   type User {
+    id: ID!
     email: String!
     userName: String!
     password: String!
     confirmed: Boolean!
+    isDisabled: Boolean!
     threads: [Thread!]
     threadItems: [ThreadItem!]
     createdBy: String!
@@ -49,6 +51,7 @@ const typeDefs = gql`
   type ThreadItem {
     id: ID!
     views: Int!
+    points: Int!
     isDisabled: Boolean!
     body: String!
     user: User!
