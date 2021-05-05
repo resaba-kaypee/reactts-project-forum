@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Length } from "class-validator";
 import { Thread } from "./Thread";
 import { ThreadPoint } from "./ThreadPoint";
-import { ThreadItemPoint } from "./ThreadItemPoints";
+import { ThreadItemPoint } from "./ThreadItemPoint";
 import { Auditable } from "./Auditable";
 
 @Entity({ name: "Users" })
