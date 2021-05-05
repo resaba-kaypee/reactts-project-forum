@@ -1,3 +1,4 @@
+import { updateThreadItemPoint } from "./../repo/ThreadItemPointRepo";
 import { ThreadCategory } from "./../repo/ThreadCategory";
 import { updateThreadPoint } from "./../repo/ThreadPointRepo";
 import { createThread } from "./../repo/ThreadRepo";
@@ -212,6 +213,7 @@ const resolvers: IResolvers = {
 
     updateThreadPoint: async (
       obj: any,
+      // TODOS remove userId when authentication is implemented
       args: { userId: string; threadId: string; increment: boolean },
       ctx: GqlContext,
       info: any
@@ -226,6 +228,33 @@ const resolvers: IResolvers = {
           // ctx.req.session!.userId,
           args.userId,
           args.threadId,
+          args.increment
+        );
+        return result;
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    updateThreadItemPoint: async (
+      obj: any,
+      // TODOS remove userId when authentication is implemented
+      args: { userId: string; threadItemId: string; increment: boolean },
+      ctx: GqlContext,
+      info: any
+    ): Promise<string> => {
+      let result = "";
+
+      try {
+        // TODOS remove the comment once the session is setup
+        // if(!ctx.req.session || !ctx.req.session?.userId){
+        //   return 'You must be logged in to set likes.'
+        // }
+
+        result = await updateThreadItemPoint(
+          // ctx.req.session!.userId,
+          args.userId,
+          args.threadItemId,
           args.increment
         );
         return result;

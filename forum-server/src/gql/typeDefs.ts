@@ -127,8 +127,16 @@ const typeDefs = gql`
       title: String!
       body: String
     ): EntityResult
+    # when authenticated no need to pass in userId
     # updateThreadPoint(threadId: ID!, increment: Boolean!): String!
+    # updateThreadItemPoint(threadItemId: ID!, increment: Boolean!): String!
+    # for testing need to pass userId
     updateThreadPoint(userId: ID!, threadId: ID!, increment: Boolean!): String!
+    updateThreadItemPoint(
+      userId: ID!
+      threadItemId: ID!
+      increment: Boolean!
+    ): String!
   }
 `;
 
