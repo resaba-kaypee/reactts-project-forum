@@ -16,6 +16,7 @@ import { ThreadItem } from "../repo/ThreadItem";
 import { getAllCategories } from "../repo/ThreadCategoryRepos";
 import CategoryThread from "../repo/CategoryThread";
 import { getTopCategories } from "../repo/CategoryThreadRepo";
+import { register, UserResult } from "../repo/UserRepo";
 
 const STANDARD_ERROR = "An error has occured";
 
@@ -48,6 +49,15 @@ const resolvers: IResolvers = {
         return "EntityResult";
       }
       return "ThreadItemArray";
+    },
+  },
+
+  UserResult: {
+    __resolveType(obj: any, context: GqlContext, info: any) {
+      if (obj.messages) {
+        return "EntityResult";
+      }
+      return "User";
     },
   },
 
@@ -258,6 +268,26 @@ const resolvers: IResolvers = {
           args.increment
         );
         return result;
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    register: async (
+      obj: any,
+      args: { email: string; userName: string; password: string },
+      ctx: GqlContext,
+      info: any
+    ): Promise<string> => {
+      let user: UserResult;
+
+      try {
+        user = await register(args.email, args.userName, args.password);
+
+        if (user && user.user) {
+          return "Registration successful.";
+        }
+        return user && user.messages ? user.messages[0] : STANDARD_ERROR;
       } catch (ex) {
         throw ex;
       }
