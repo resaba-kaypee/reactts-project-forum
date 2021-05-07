@@ -8,7 +8,7 @@ export const updateThreadPoint = async (
   threadId: string,
   increment: boolean
 ): Promise<string> => {
-  // TODOS: first check user is authenticated
+  if (!userId || userId === "0") return "User is not authenticated.";
 
   let message = "Failed to increment thread point";
 
