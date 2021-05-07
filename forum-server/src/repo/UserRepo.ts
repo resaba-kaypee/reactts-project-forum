@@ -48,16 +48,16 @@ export const register = async (
 };
 
 export const login = async (
-  userName: string,
+  email: string,
   password: string
 ): Promise<UserResult> => {
   const user = await User.findOne({
-    where: { userName },
+    where: { email },
   });
 
   if (!user) {
     return {
-      messages: [userNotFound(userName)],
+      messages: [userNotFound(email)],
     };
   }
 
@@ -88,6 +88,22 @@ export const logout = async (userName: string): Promise<string> => {
   if (!user) userNotFound(userName);
 
   return `User logged off.`;
+};
+
+export const me = async (id: string): Promise<UserResult> => {
+  const user = await User.findOne({
+    where: { id },
+    relations: ["threads", "threads.threadItems"],
+  });
+
+  if (!user) return { messages: ["User not found."] };
+
+  if (!user.confirmed)
+    return {
+      messages: ["User has not confirmed their email registration yet."],
+    };
+
+  return { user };
 };
 
 function userNotFound(userName: string) {
