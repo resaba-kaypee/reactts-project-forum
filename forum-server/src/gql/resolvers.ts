@@ -16,7 +16,8 @@ import { ThreadItem } from "../repo/ThreadItem";
 import { getAllCategories } from "../repo/ThreadCategoryRepos";
 import CategoryThread from "../repo/CategoryThread";
 import { getTopCategories } from "../repo/CategoryThreadRepo";
-import { register, UserResult } from "../repo/UserRepo";
+import { login, logout, me, register, UserResult } from "../repo/UserRepo";
+import { User } from "../repo/User";
 
 const STANDARD_ERROR = "An error has occured";
 
@@ -191,6 +192,28 @@ const resolvers: IResolvers = {
         throw ex;
       }
     },
+
+    me: async (
+      obj: any,
+      args: null,
+      ctx: GqlContext,
+      info: any
+    ): Promise<User | EntityResult> => {
+      let user: UserResult;
+
+      try {
+        if (!ctx.req.session?.userId)
+          return { messages: ["User not logged in."] };
+
+        user = await me(ctx.req.session.userId);
+
+        if (user && user.user) return user.user;
+
+        return { messages: user.messages ? user.messages : [STANDARD_ERROR] };
+      } catch (ex) {
+        throw ex;
+      }
+    },
   },
 
   // :> Mutations
@@ -288,6 +311,51 @@ const resolvers: IResolvers = {
           return "Registration successful.";
         }
         return user && user.messages ? user.messages[0] : STANDARD_ERROR;
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    login: async (
+      obj: any,
+      args: { email: string; password: string },
+      ctx: GqlContext,
+      info: any
+    ): Promise<string> => {
+      let user: UserResult;
+
+      try {
+        user = await login(args.email, args.password);
+
+        if (user && user.user) {
+          ctx.req.session!.userId = user.user.id;
+
+          return `Log in successful for userId ${ctx.req.session!.userId}`;
+        }
+        return user && user.messages ? user.messages[0] : STANDARD_ERROR;
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    logout: async (
+      obj: any,
+      args: { userName: string },
+      ctx: GqlContext,
+      info: any
+    ): Promise<string> => {
+      try {
+        let result = await logout(args.userName);
+
+        ctx.req.session?.destroy((err: any) => {
+          if (err) {
+            console.log("destroy session failed");
+            return;
+          }
+          console.log("session destroyed");
+        });
+        return result;
       } catch (ex) {
         throw ex;
       }

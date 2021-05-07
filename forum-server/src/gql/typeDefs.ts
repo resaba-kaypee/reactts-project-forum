@@ -118,6 +118,7 @@ const typeDefs = gql`
     getThreadItemsByThreadId(threadId: ID!): ThreadItemArrayResult!
     getAllCategories: [ThreadCategory!]
     getTopCategories: [CategoryThread!]
+    me: UserResult!
   }
 
   type Mutation {
@@ -138,6 +139,8 @@ const typeDefs = gql`
       increment: Boolean!
     ): String!
     register(email: String!, userName: String, password: String!): String!
+    login(email: String!, password: String!): String!
+    logout(userName: String!): String!
   }
 `;
 
