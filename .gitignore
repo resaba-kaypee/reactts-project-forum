@@ -10,6 +10,7 @@
 
 # production
 /build
+/redis
 
 # misc
 .DS_Store
@@ -18,6 +19,9 @@
 .env.test.local
 .env.production.local
 *.pdf
+*.sql
+config.env
+continue.md
 
 npm-debug.log*
 yarn-debug.log*
