@@ -268,8 +268,7 @@ const resolvers: IResolvers = {
 
     updateThreadItemPoint: async (
       obj: any,
-      // TODOS remove userId when authentication is implemented
-      args: { userId: string; threadItemId: string; increment: boolean },
+      args: { threadItemId: string; increment: boolean },
       ctx: GqlContext,
       info: any
     ): Promise<string> => {
@@ -277,13 +276,12 @@ const resolvers: IResolvers = {
 
       try {
         // TODOS remove the comment once the session is setup
-        // if(!ctx.req.session || !ctx.req.session?.userId){
-        //   return 'You must be logged in to set likes.'
-        // }
+        if (!ctx.req.session || !ctx.req.session?.userId) {
+          return "You must be logged in to set likes.";
+        }
 
         result = await updateThreadItemPoint(
-          // ctx.req.session!.userId,
-          args.userId,
+          ctx.req.session!.userId,
           args.threadItemId,
           args.increment
         );
