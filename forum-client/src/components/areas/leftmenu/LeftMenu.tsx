@@ -1,28 +1,44 @@
 import { useEffect, useState } from "react";
-import { getCategories } from "../../../services/DataService";
-import Category from "../../../models/Category";
 import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
+import { gql, useQuery } from "@apollo/client";
+import { Link } from "react-router-dom";
+
+const GetAllCategories = gql`
+  query getAllCategories {
+    getAllCategories {
+      id
+      name
+    }
+  }
+`;
 
 const LeftMenu = () => {
+  const { loading, error, data } = useQuery(GetAllCategories);
   const { width } = useWindowDimensions();
-
   const [categories, setCategories] = useState<JSX.Element>(
     <div>Left Menu</div>
   );
 
   useEffect(() => {
-    getCategories()
-      .then((categoriesArr: Array<Category>) => {
-        const cats = categoriesArr.map((category) => {
-          return <li key={category.id}>{category.name}</li>;
+    if (loading) {
+      setCategories(<span>Loading ...</span>);
+    } else if (error) {
+      setCategories(<span>Error occurred loading categories ...</span>);
+    } else {
+      if (data && data.getAllCategories) {
+        const cats = data.getAllCategories.map((cat: any) => {
+          return (
+            <li key={cat.id}>
+              <Link to={`/categorythreads/${cat.id}`}>{cat.name}</Link>
+            </li>
+          );
         });
 
         setCategories(<ul className="category">{cats}</ul>);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  });
+      }
+    }
+    // eslint-disable-next-line
+  }, [data]);
 
   if (width <= 768) return null;
 
