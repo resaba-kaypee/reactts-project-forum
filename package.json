@@ -1,0 +1,12 @@
+{
+  "name": "reactts-project-forum",
+  "version": "1.0.0",
+  "description": "A simple forum created in React, Typescript, GraphQL and Postgres.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
