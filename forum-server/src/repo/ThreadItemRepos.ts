@@ -26,7 +26,9 @@ export const createThreadItem = async (
   }).save();
   if (!threadItem) return { messages: ["Failed to create ThreadItem."] };
 
-  return { messages: ["ThreadItem created successfully"] };
+  return {
+    messages: [`ThreadItem with id ${threadItem.id} created successfully`],
+  };
 };
 
 export const getThreadItemsByThreadId = async (
