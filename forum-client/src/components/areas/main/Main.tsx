@@ -137,6 +137,8 @@ const Main = () => {
     }
   }, [threadsLatestData]);
 
+  // TODOS onClickPostThread
+
   return (
     <main className="content">
       <MainHeader category={category} />
