@@ -1,34 +1,24 @@
 import React, { FC } from "react";
-import DropDown, { Option } from "react-dropdown";
 import "react-dropdown/style.css";
+import Category from "../../../models/Category";
+import CategoryDropDown from "../../CategoryDropDown";
 
 interface ThreadCategoryProps {
-  categoryName?: string;
+  category?: Category;
+  sendOutSelectedCategory: (cat: Category) => void;
 }
 
-const ThreadCategory: FC<ThreadCategoryProps> = ({ categoryName }) => {
-  const catOptions: Array<string | Option> = [
-    {
-      value: "1",
-      label: "Programming",
-    },
-    {
-      value: "2",
-      label: "Cooking",
-    },
-  ];
-  const defaultOption = catOptions[0];
-  const onChangeDropdown = (arg: Option) => console.log(arg);
-
+const ThreadCategory: FC<ThreadCategoryProps> = ({
+  category,
+  sendOutSelectedCategory,
+}) => {
   return (
     <div className="thread-category-container">
-      <strong>{categoryName}</strong>
-      <DropDown
-        className="thread-category-dropdown"
-        options={catOptions}
-        onChange={onChangeDropdown}
-        value={defaultOption}
-        placeholder="Select a category"
+      <strong>{category?.name}</strong>
+      <div style={{ marginTop: "1em" }}></div>
+      <CategoryDropDown
+        preselectedCategory={category}
+        sendOutSelectedCategory={sendOutSelectedCategory}
       />
     </div>
   );
