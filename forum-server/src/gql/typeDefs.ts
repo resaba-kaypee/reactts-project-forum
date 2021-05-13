@@ -133,7 +133,7 @@ const typeDefs = gql`
 
     register(email: String!, userName: String, password: String!): String!
     login(email: String!, password: String!): String!
-    logout(userName: String!): String!
+    logout(email: String!): String!
   }
 `;
 

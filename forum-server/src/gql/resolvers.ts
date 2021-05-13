@@ -336,20 +336,25 @@ const resolvers: IResolvers = {
 
     logout: async (
       obj: any,
-      args: { userName: string },
+      args: { email: string },
       ctx: GqlContext,
       info: any
     ): Promise<string> => {
       try {
-        let result = await logout(args.userName);
+        let result = await logout(args.email);
 
-        ctx.req.session?.destroy((err: any) => {
-          if (err) {
-            console.log("destroy session failed");
-            return;
-          }
-          console.log("session destroyed");
-        });
+        if (ctx.req.session?.userId) {
+          ctx.req.session?.destroy((err: any) => {
+            if (err) {
+              console.log("destroy session failed");
+              return;
+            }
+            console.log("session destroyed");
+          });
+        } else {
+          return "Your are not logged in.";
+        }
+
         return result;
       } catch (ex) {
         throw ex;
