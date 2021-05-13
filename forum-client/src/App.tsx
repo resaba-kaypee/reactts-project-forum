@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { Route, Switch } from "react-router";
 import { useDispatch } from "react-redux";
-import { UserProfileSetType } from "./store/user/Reducer";
 import { gql, useQuery } from "@apollo/client";
 import { ThreadCategoriesType } from "./store/categories/Reducer";
 import "./App.css";
 import Home from "./components/routes/Home";
 import Thread from "./components/routes/thread/Thread";
 import UserProfile from "./components/routes/userProfile/UserProfile";
+import useRefreshReduxMe from "./hooks/useRefreshReduxMe";
 
 const GetAllCategories = gql`
   query getAllCategories {
@@ -20,18 +20,18 @@ const GetAllCategories = gql`
 
 function App() {
   const { data: categoriesData } = useQuery(GetAllCategories);
-  // TODOS useRefreshReduxMe
+  const { execMe, updateMe } = useRefreshReduxMe();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({
-      type: UserProfileSetType,
-      payload: {
-        id: 1,
-        userName: "testUser",
-      },
-    });
+    execMe();
+  }, [execMe]);
 
+  useEffect(() => {
+    updateMe();
+  }, [updateMe]);
+
+  useEffect(() => {
     if (categoriesData && categoriesData.getAllCategories) {
       dispatch({
         type: ThreadCategoriesType,

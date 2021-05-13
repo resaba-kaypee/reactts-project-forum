@@ -1,40 +1,40 @@
-import React, { FC, useReducer, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { FC, useReducer } from "react";
 import ReactModal from "react-modal";
 import { ModalProps } from "../../types/ModalProps";
 import userReducer from "./common/UserReducer";
 import { allowSubmit } from "./common/Helpers";
-import { UserProfileSetType } from "../../store/user/Reducer";
+import useRefreshReduxMe, { Me } from "../../hooks/useRefreshReduxMe";
+import { gql, useMutation } from "@apollo/client";
 import "./Auth.css";
 
+const LoginMutation = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password)
+  }
+`;
+
 const Login: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
-  const [
-    { userName, password, resultMsg, isSubmitDisabled },
-    dispatch,
-  ] = useReducer(userReducer, {
-    userName: "",
-    password: "",
-    resultMsg: "",
-    isSubmitDisabled: true,
+  const [execLogin] = useMutation(LoginMutation, {
+    refetchQueries: [
+      {
+        query: Me,
+      },
+    ],
   });
 
-  const reduxDispatch = useDispatch();
-
-  useEffect(() => {
-    // todo: replace with GraphQL call
-    reduxDispatch({
-      type: UserProfileSetType,
-      payload: {
-        id: 1,
-        userName: "testUser",
-      },
+  const [{ email, password, resultMsg, isSubmitDisabled }, dispatch] =
+    useReducer(userReducer, {
+      email: "",
+      password: "",
+      resultMsg: "",
+      isSubmitDisabled: true,
     });
-  }, [reduxDispatch]);
 
-  const onChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "userName", payload: e.target.value });
-    if (!e.target.value)
-      allowSubmit(dispatch, "Username cannot be empty", true);
+  const { execMe, updateMe } = useRefreshReduxMe();
+
+  const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "email", payload: e.target.value });
+    if (!e.target.value) allowSubmit(dispatch, "Email cannot be empty", true);
     else allowSubmit(dispatch, "", false);
   };
 
@@ -45,9 +45,21 @@ const Login: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
     else allowSubmit(dispatch, "", false);
   };
 
-  const onClickLogin = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onClickLogin = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     e.preventDefault();
     onClickToggle(e);
+    const result = await execLogin({
+      variables: {
+        email,
+        password,
+      },
+    });
+
+    console.log("login", result);
+    execMe();
+    updateMe();
   };
 
   const onClickCancel = (
@@ -65,8 +77,13 @@ const Login: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
       <form>
         <div className="reg-inputs">
           <div>
-            <label>username</label>
-            <input type="text" value={userName} onChange={onChangeUserName} />
+            <label>email</label>
+            <input
+              type="text"
+              placeholder="Email"
+              value={email}
+              onChange={onChangeEmail}
+            />
           </div>
           <div>
             <label>password</label>
