@@ -95,7 +95,12 @@ export const logout = async (email: string): Promise<string> => {
 export const me = async (id: string): Promise<UserResult> => {
   const user = await User.findOne({
     where: { id },
-    relations: ["threads", "threads.threadItems"],
+    relations: [
+      "threads",
+      "threads.threadItems",
+      "threadItems",
+      "threadItems.thread",
+    ],
   });
 
   if (!user) return { messages: ["User not found."] };
