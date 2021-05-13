@@ -50,14 +50,14 @@ const Login: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
   ) => {
     e.preventDefault();
     onClickToggle(e);
-    const result = await execLogin({
+
+    await execLogin({
       variables: {
         email,
         password,
       },
     });
 
-    console.log("login", result);
     execMe();
     updateMe();
   };
@@ -73,7 +73,8 @@ const Login: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
       className="modal-menu"
       isOpen={isOpen}
       onRequestClose={onClickToggle}
-      shouldCloseOnOverlayClick={true}>
+      shouldCloseOnOverlayClick={true}
+      ariaHideApp={false}>
       <form>
         <div className="reg-inputs">
           <div>
