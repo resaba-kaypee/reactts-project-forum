@@ -80,12 +80,14 @@ export const login = async (
   };
 };
 
-export const logout = async (userName: string): Promise<string> => {
+export const logout = async (email: string): Promise<string> => {
   const user = await User.findOne({
-    where: { userName },
+    where: { email },
   });
 
-  if (!user) userNotFound(userName);
+  console.log(user);
+
+  if (!user) return userNotFound(email);
 
   return `User logged off.`;
 };
@@ -106,6 +108,6 @@ export const me = async (id: string): Promise<UserResult> => {
   return { user };
 };
 
-function userNotFound(userName: string) {
-  return `User with userName ${userName} not found.`;
+function userNotFound(email: string) {
+  return `User with email ${email} not found.`;
 }
