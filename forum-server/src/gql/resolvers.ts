@@ -16,7 +16,14 @@ import { ThreadItem } from "../repo/ThreadItem";
 import { getAllCategories } from "../repo/ThreadCategoryRepos";
 import CategoryThread from "../repo/CategoryThread";
 import { getTopCategories } from "../repo/CategoryThreadRepo";
-import { login, logout, me, register, UserResult } from "../repo/UserRepo";
+import {
+  changePassword,
+  login,
+  logout,
+  me,
+  register,
+  UserResult,
+} from "../repo/UserRepo";
 import { User } from "../repo/User";
 
 const STANDARD_ERROR = "An error has occured";
@@ -354,6 +361,28 @@ const resolvers: IResolvers = {
         } else {
           return "Your are not logged in.";
         }
+
+        return result;
+      } catch (ex) {
+        throw ex;
+      }
+    },
+
+    changePassword: async (
+      obj: any,
+      args: { newPassword: string },
+      ctx: GqlContext,
+      info: any
+    ): Promise<string> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return "You must be logged in to change password.";
+        }
+
+        let result = await changePassword(
+          ctx.req.session!.userId,
+          args.newPassword
+        );
 
         return result;
       } catch (ex) {

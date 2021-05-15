@@ -130,10 +130,10 @@ const typeDefs = gql`
     ): EntityResult
     updateThreadPoint(threadId: ID!, increment: Boolean!): String!
     updateThreadItemPoint(threadItemId: ID!, increment: Boolean!): String!
-
     register(email: String!, userName: String, password: String!): String!
     login(email: String!, password: String!): String!
     logout(email: String!): String!
+    changePassword(newPassword: String!): String!
   }
 `;
 

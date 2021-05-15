@@ -113,6 +113,31 @@ export const me = async (id: string): Promise<UserResult> => {
   return { user };
 };
 
+export const changePassword = async (
+  id: string,
+  newPassword: string
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return "User not found";
+  }
+
+  if (!user.confirmed) {
+    return "User has not confirmed their email registration yet.";
+  }
+
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  user.password = hashedPassword;
+  user.save();
+
+  return "Password change successfuly.";
+};
+
 function userNotFound(email: string) {
   return `User with email ${email} not found.`;
 }
