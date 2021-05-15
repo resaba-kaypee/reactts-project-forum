@@ -8,9 +8,8 @@ interface ThreadResponseBuilderProps {
 const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
   threadItems,
 }) => {
-  const [responseElements, setResponseElements] = useState<
-    JSX.Element | undefined
-  >();
+  const [responseElements, setResponseElements] =
+    useState<JSX.Element | undefined>();
 
   useEffect(() => {
     if (threadItems) {
@@ -19,7 +18,7 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
           <li key={`thr-${ti.id}`}>
             <ThreadResponse
               body={ti.body}
-              userName={ti.userName}
+              userName={ti.user.userName}
               lastModifiedOn={ti.createdOn}
               points={ti.points}
             />
