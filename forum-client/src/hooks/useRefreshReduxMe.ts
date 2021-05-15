@@ -12,6 +12,7 @@ export const Me = gql`
       ... on User {
         id
         userName
+        email
         threads {
           id
           title
@@ -46,7 +47,7 @@ const useRefreshReduxMe = (): UserRefreshReduxMeResult => {
   };
 
   const updateMe = () => {
-    if (data && data.me && data.me.userName) {
+    if (data && data.me && data.me.email) {
       reduxDispatcher({
         type: UserProfileSetType,
         payload: data.me,
