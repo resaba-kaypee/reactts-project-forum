@@ -4,11 +4,18 @@ import userReducer from "../../auth/common/UserReducer";
 import { useSelector } from "react-redux";
 import { AppState } from "../../../store/AppState";
 import { getUserThreads } from "../../../services/DataService";
+import { gql, useMutation } from "@apollo/client";
 import Nav from "../../areas/Nav";
 import Thread from "../../../models/Thread";
 import ThreadItem from "../../../models/ThreadItem";
 import PasswordComparison from "../../auth/common/PasswordComparison";
 import "./UserProfile.css";
+
+const ChangePassword = gql`
+  mutation ChangePassword($newPassword: String!) {
+    changePassword(newPassword: $newPassword)
+  }
+`;
 
 const UserProfile = () => {
   const [
@@ -25,6 +32,7 @@ const UserProfile = () => {
   const user = useSelector((state: AppState) => state.user);
   const [threads, setThreads] = useState<JSX.Element | undefined>();
   const [threadItems, setThreadItems] = useState<JSX.Element | undefined>();
+  const [execChangePassword] = useMutation(ChangePassword);
 
   useEffect(() => {
     console.log("user", user);
@@ -64,6 +72,22 @@ const UserProfile = () => {
     // eslint-disable-next-line
   }, [user]);
 
+  const onClickChangePassword = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    const { data: changePasswordData } = await execChangePassword({
+      variables: {
+        newPassword: password,
+      },
+    });
+
+    dispatch({
+      type: "resultMsg",
+      payload: changePasswordData ? changePasswordData.changePassword : "",
+    });
+  };
+
   return (
     <div className="screen-root-container">
       <div className="thread-nav-container">
@@ -81,7 +105,10 @@ const UserProfile = () => {
               password={password}
               passwordConfirm={passwordConfirm}
             />
-            <button className="action-btn" disabled={isSubmitDisable}>
+            <button
+              className="action-btn"
+              disabled={isSubmitDisable}
+              onClick={onClickChangePassword}>
               Change Password
             </button>
           </div>
