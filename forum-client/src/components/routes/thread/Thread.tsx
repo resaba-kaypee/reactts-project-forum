@@ -1,28 +1,75 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { gql, useLazyQuery } from "@apollo/client";
+import "./Thread.css";
+import Nav from "../../areas/Nav";
 import ThreadModel from "../../../models/Thread";
 import ThreadHeader from "./ThreadHeader";
-import Nav from "../../areas/Nav";
-import { getThreadById } from "../../../services/DataService";
-import "./Thread.css";
 import ThreadCategory from "./ThreadCategory";
 import ThreadTitle from "./ThreadTitle";
 import ThreadBody from "./ThreadBody";
 import ThreadResponseBuilder from "./ThreadResponseBuilder";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
 
+const GetThreadById = gql`
+  query GetThreadById($id: ID!) {
+    getThreadById(id: $id) {
+      ... on Entity {
+        messages
+      }
+
+      ... on Thread {
+        id
+        user {
+          userName
+        }
+        lastModifiedOn
+        title
+        body
+        points
+        category {
+          id
+          name
+        }
+        threadItems {
+          id
+          body
+          points
+          user {
+            userName
+          }
+        }
+      }
+    }
+  }
+`;
+
 const Thread = () => {
+  const [execGetThreadById, { data: threadData }] = useLazyQuery(GetThreadById);
+
   const [thread, setThread] = useState<ThreadModel | undefined>();
+  const [readOnly, setReadOnly] = useState(false);
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    console.log("Thread id: ", id);
     if (id && Number(id) > 0) {
-      getThreadById(id).then((th) => {
-        setThread(th);
+      console.log("Thread id: ", id);
+      execGetThreadById({
+        variables: {
+          id,
+        },
       });
     }
-  }, [id]);
+  }, [id, execGetThreadById]);
+
+  useEffect(() => {
+    if (threadData && threadData.getThreadById) {
+      console.log("threadData", threadData);
+      setThread(threadData.getThreadById);
+    } else {
+      setThread(undefined);
+    }
+  }, [threadData]);
 
   return (
     <div className="screen-root-container">
@@ -32,13 +79,13 @@ const Thread = () => {
       <div className="thread-content-container">
         <div className="thread-content-post-container">
           <ThreadHeader
-            userName={thread?.userName}
+            userName={thread?.user.userName}
             lastModifiedOn={thread ? thread.lastModifiedOn : new Date()}
             title={thread?.title}
           />
-          <ThreadCategory categoryName={thread?.category?.name} />
+          <ThreadCategory category={thread?.category} />
           <ThreadTitle title={thread?.title} />
-          <ThreadBody body={thread?.body} />
+          <ThreadBody body={thread?.body} readOnly={readOnly} />
         </div>
         <div className="thread-content-points-container">
           <ThreadPointsBar
@@ -51,7 +98,10 @@ const Thread = () => {
       </div>
       <div className="thread-content-response-container">
         <hr className="thread-section-divider" />
-        <ThreadResponseBuilder threadItems={thread?.threadItems} />
+        <ThreadResponseBuilder
+          threadItems={thread?.threadItems}
+          readOnly={readOnly}
+        />
       </div>
     </div>
   );
