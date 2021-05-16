@@ -4,9 +4,11 @@ import ThreadResponse from "./ThreadResponse";
 
 interface ThreadResponseBuilderProps {
   threadItems?: Array<ThreadItem>;
+  readOnly: boolean;
 }
 const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
   threadItems,
+  readOnly,
 }) => {
   const [responseElements, setResponseElements] =
     useState<JSX.Element | undefined>();
@@ -21,13 +23,14 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
               userName={ti.user.userName}
               lastModifiedOn={ti.createdOn}
               points={ti.points}
+              readOnly={readOnly}
             />
           </li>
         );
       });
       setResponseElements(<ul>{thResponses}</ul>);
     }
-  }, [threadItems]);
+  }, [threadItems, readOnly]);
   return (
     <div className="thread-body-container">
       <strong style={{ marginBottom: ".75em" }}>Responses</strong>

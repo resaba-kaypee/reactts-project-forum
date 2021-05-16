@@ -33,11 +33,12 @@ const initialValue = [
 
 const LIST_TYPES = ["numbered-list", "bulleted-list"];
 
-interface RichEditorProps {
+class RichEditorProps {
   existingBody?: string;
+  readOnly?: boolean = false;
 }
 
-const RichEditor: FC<RichEditorProps> = ({ existingBody }) => {
+const RichEditor: FC<RichEditorProps> = ({ existingBody, readOnly }) => {
   const [value, setValue] = useState<Node[]>(initialValue);
 
   const renderElement = useCallback((props) => <Element {...props} />, []);
@@ -79,6 +80,7 @@ const RichEditor: FC<RichEditorProps> = ({ existingBody }) => {
         placeholder="Enter some rich text..."
         spellCheck
         autoFocus
+        readOnly={readOnly}
         onKeyDown={(event) => {
           for (const hotkey in HOTKEYS) {
             if (isHotkey(hotkey, event as any)) {
