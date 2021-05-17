@@ -13,13 +13,17 @@ const GetAllCategories = gql`
   query getAllCategories {
     getAllCategories {
       id
-      userName
+      name
     }
   }
 `;
 
 function App() {
-  const { data: categoriesData } = useQuery(GetAllCategories);
+  const {
+    // error: categoriesDataErr,
+    // called: categoriesDataCalled,
+    data: categoriesData,
+  } = useQuery(GetAllCategories);
   const { execMe, updateMe } = useRefreshReduxMe();
   const dispatch = useDispatch();
 
