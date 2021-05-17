@@ -46,7 +46,7 @@ const ThreadCard: FC<ThreadCardProps> = ({ thread }) => {
             <strong>{thread.category.name}</strong>
           </Link>
           <span className="username-header" style={{ marginLeft: ".5em" }}>
-            {thread.userName}
+            {thread.user.userName}
           </span>
         </div>
         <div className="question">
