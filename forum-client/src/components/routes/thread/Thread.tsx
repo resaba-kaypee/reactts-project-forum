@@ -14,13 +14,14 @@ import ThreadPointsBar from "../../points/ThreadPointsBar";
 const GetThreadById = gql`
   query GetThreadById($id: ID!) {
     getThreadById(id: $id) {
-      ... on Entity {
+      ... on EntityResult {
         messages
       }
 
       ... on Thread {
         id
         user {
+          id
           userName
         }
         lastModifiedOn
@@ -36,6 +37,7 @@ const GetThreadById = gql`
           body
           points
           user {
+            id
             userName
           }
         }
@@ -45,11 +47,28 @@ const GetThreadById = gql`
 `;
 
 const Thread = () => {
-  const [execGetThreadById, { data: threadData }] = useLazyQuery(GetThreadById);
+  const [
+    execGetThreadById,
+    {
+      // error: getThreadByIdErr,
+      // called: getThreadByIdCalled,
+      data: threadData,
+    },
+  ] = useLazyQuery(GetThreadById, { fetchPolicy: "no-cache" });
 
   const [thread, setThread] = useState<ThreadModel | undefined>();
   const [readOnly, setReadOnly] = useState(false);
   const { id } = useParams<{ id: string }>();
+
+  const refreshThread = () => {
+    if (id) {
+      execGetThreadById({
+        variables: {
+          id,
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     if (id && Number(id) > 0) {
@@ -64,11 +83,13 @@ const Thread = () => {
 
   useEffect(() => {
     if (threadData && threadData.getThreadById) {
-      console.log("threadData", threadData);
       setThread(threadData.getThreadById);
+      setReadOnly(true);
     } else {
       setThread(undefined);
+      setReadOnly(false);
     }
+    // eslint-disable-next-line
   }, [threadData]);
 
   return (
@@ -93,6 +114,10 @@ const Thread = () => {
             responseCount={
               thread && thread.threadItems && thread.threadItems.length
             }
+            userId={thread?.user.id || "0"}
+            threadId={thread?.id || "0"}
+            allowUpdatedPoints={true}
+            refreshThread={refreshThread}
           />
         </div>
       </div>
