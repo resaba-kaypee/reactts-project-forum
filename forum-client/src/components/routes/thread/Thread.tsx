@@ -58,10 +58,11 @@ const Thread = () => {
 
   const [thread, setThread] = useState<ThreadModel | undefined>();
   const [readOnly, setReadOnly] = useState(false);
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: any }>();
 
   const refreshThread = () => {
-    if (id) {
+    console.log("refreshed");
+    if (id && id > 0) {
       execGetThreadById({
         variables: {
           id,
@@ -71,7 +72,7 @@ const Thread = () => {
   };
 
   useEffect(() => {
-    if (id && Number(id) > 0) {
+    if (id && id > 0) {
       console.log("Thread id: ", id);
       execGetThreadById({
         variables: {
@@ -126,6 +127,7 @@ const Thread = () => {
         <ThreadResponseBuilder
           threadItems={thread?.threadItems}
           readOnly={readOnly}
+          refreshThread={refreshThread}
         />
       </div>
     </div>
