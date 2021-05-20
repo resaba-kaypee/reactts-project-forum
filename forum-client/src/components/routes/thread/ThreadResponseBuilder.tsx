@@ -5,10 +5,12 @@ import ThreadResponse from "./ThreadResponse";
 interface ThreadResponseBuilderProps {
   threadItems?: Array<ThreadItem>;
   readOnly: boolean;
+  refreshThread: () => void;
 }
 const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
   threadItems,
   readOnly,
+  refreshThread,
 }) => {
   const [responseElements, setResponseElements] =
     useState<JSX.Element | undefined>();
@@ -24,12 +26,16 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
               lastModifiedOn={ti.createdOn}
               points={ti.points}
               readOnly={readOnly}
+              userId={ti?.user.id || "0"}
+              threadItemId={ti?.id || "0"}
+              refreshThread={refreshThread}
             />
           </li>
         );
       });
       setResponseElements(<ul>{thResponses}</ul>);
     }
+    // eslint-disable-next-line
   }, [threadItems, readOnly]);
   return (
     <div className="thread-body-container">
