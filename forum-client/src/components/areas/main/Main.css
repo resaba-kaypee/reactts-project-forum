@@ -51,6 +51,22 @@
   margin-bottom: 0.35em;
 }
 
+.threadpointsinline-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  color: var(--point-color);
+  font-size: var(--sm-med-font-size);
+  text-align: center;
+}
+
+.threadpointsinline-item-btn {
+  cursor: pointer;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
 .main-header {
   padding: 0.5em 0.75em 0.5em 0.75em;
   margin-top: 0.18em;
