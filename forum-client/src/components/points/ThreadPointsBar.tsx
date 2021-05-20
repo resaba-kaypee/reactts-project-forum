@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,16 +10,8 @@ import {
 import { gql, useMutation } from "@apollo/client";
 
 const UpdateThreadPoint = gql`
-  mutation UpdateThreadPoint(
-    $userId: ID!
-    $threadId: ID!
-    $increment: Boolean!
-  ) {
-    updateThreadPoint(
-      userId: $userId
-      threadId: $threadId
-      increment: $increment
-    )
+  mutation UpdateThreadPoint($threadId: ID!, $increment: Boolean!) {
+    updateThreadPoint(threadId: $threadId, increment: $increment)
   }
 `;
 export class ThreadPointsBarProps {
@@ -50,7 +42,6 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
 
     await execUpdateThreadPoint({
       variables: {
-        userId,
         threadId,
         increment: true,
       },
@@ -66,7 +57,6 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
 
     await execUpdateThreadPoint({
       variables: {
-        userId,
         threadId,
         increment: false,
       },
