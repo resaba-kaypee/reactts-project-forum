@@ -10,6 +10,8 @@ import ThreadTitle from "./ThreadTitle";
 import ThreadBody from "./ThreadBody";
 import ThreadResponseBuilder from "./ThreadResponseBuilder";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
+import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
+import ThreadPointsInline from "../../points/ThreadPointsInline";
 
 const GetThreadById = gql`
   query GetThreadById($id: ID!) {
@@ -47,6 +49,7 @@ const GetThreadById = gql`
 `;
 
 const Thread = () => {
+  const { width } = useWindowDimensions();
   const [
     execGetThreadById,
     {
@@ -100,6 +103,14 @@ const Thread = () => {
       </div>
       <div className="thread-content-container">
         <div className="thread-content-post-container">
+          {width <= 768 && thread ? (
+            <ThreadPointsInline
+              points={thread?.points || 0}
+              threadId={thread?.id}
+              refreshThread={refreshThread}
+              allowUpdatePoints={true}
+            />
+          ) : null}
           <ThreadHeader
             userName={thread?.user.userName}
             lastModifiedOn={thread ? thread.lastModifiedOn : new Date()}
@@ -115,7 +126,6 @@ const Thread = () => {
             responseCount={
               thread && thread.threadItems && thread.threadItems.length
             }
-            userId={thread?.user.id || "0"}
             threadId={thread?.id || "0"}
             allowUpdatedPoints={true}
             refreshThread={refreshThread}
