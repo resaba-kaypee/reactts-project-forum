@@ -6,7 +6,6 @@ import UserNameAndTime from "./UserNameAndTime";
 interface ThreadResponseProps {
   body?: string;
   userName?: string;
-  userId: string;
   threadItemId: string;
   lastModifiedOn?: Date;
   points: number;
@@ -16,7 +15,6 @@ interface ThreadResponseProps {
 const ThreadResponse: FC<ThreadResponseProps> = ({
   body,
   userName,
-  userId,
   threadItemId,
   lastModifiedOn,
   points,
@@ -30,7 +28,6 @@ const ThreadResponse: FC<ThreadResponseProps> = ({
         <span style={{ marginLeft: "1em" }}>
           <ThreadPointsInline
             points={points || 0}
-            userId={userId}
             threadItemId={threadItemId}
             allowUpdatePoints={true}
             refreshThread={refreshThread}
