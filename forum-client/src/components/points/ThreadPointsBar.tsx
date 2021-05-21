@@ -1,4 +1,5 @@
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
+import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
 import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -7,17 +8,10 @@ import {
   faChevronDown,
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { gql, useMutation } from "@apollo/client";
 
-const UpdateThreadPoint = gql`
-  mutation UpdateThreadPoint($threadId: ID!, $increment: Boolean!) {
-    updateThreadPoint(threadId: $threadId, increment: $increment)
-  }
-`;
 export class ThreadPointsBarProps {
   points: number = 0;
   responseCount?: number;
-  userId?: string;
   threadId?: string;
   allowUpdatedPoints?: boolean = false;
   refreshThread?: () => void;
@@ -26,43 +20,16 @@ export class ThreadPointsBarProps {
 const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
   points,
   responseCount,
-  userId,
   threadId,
   allowUpdatedPoints,
   refreshThread,
 }) => {
   const { width } = useWindowDimensions();
 
-  const [execUpdateThreadPoint] = useMutation(UpdateThreadPoint);
-
-  const onClickIncThreadPoint = async (
-    e: React.MouseEvent<SVGSVGElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
-    await execUpdateThreadPoint({
-      variables: {
-        threadId,
-        increment: true,
-      },
-    });
-
-    refreshThread && refreshThread();
-  };
-
-  const onClickDecThreadPoint = async (
-    e: React.MouseEvent<SVGSVGElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
-    await execUpdateThreadPoint({
-      variables: {
-        threadId,
-        increment: false,
-      },
-    });
-    refreshThread && refreshThread();
-  };
+  const { onClickIncThreadPoint, onClickDecThreadPoint } = useUpdateThreadPoint(
+    refreshThread,
+    threadId
+  );
 
   if (width > 768) {
     return (

@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
@@ -15,7 +16,6 @@ const UpdateThreadItemPoint = gql`
 
 class ThreadPointsInlineProps {
   points: number = 0;
-  userId?: string;
   threadId?: string;
   threadItemId?: string;
   allowUpdatePoints?: boolean = false;
@@ -24,13 +24,17 @@ class ThreadPointsInlineProps {
 
 const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
   points,
-  userId,
   threadId,
   threadItemId,
   allowUpdatePoints,
   refreshThread,
 }) => {
   const [execUpdateThreadItemPoint] = useMutation(UpdateThreadItemPoint);
+
+  const { onClickDecThreadPoint, onClickIncThreadPoint } = useUpdateThreadPoint(
+    refreshThread,
+    threadId
+  );
 
   const onClickIncThreadItemPoint = async (
     e: React.MouseEvent<SVGSVGElement, MouseEvent>
@@ -69,7 +73,7 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
         <FontAwesomeIcon
           icon={faChevronUp}
           className="point-icon"
-          onClick={onClickIncThreadItemPoint}
+          onClick={threadId ? onClickIncThreadPoint : onClickIncThreadItemPoint}
         />
       </div>
       {points}
@@ -79,7 +83,7 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
         <FontAwesomeIcon
           icon={faChevronDown}
           className="points-icon"
-          onClick={onClickDecThreadItemPoint}
+          onClick={threadId ? onClickDecThreadPoint : onClickDecThreadItemPoint}
         />
       </div>
 
