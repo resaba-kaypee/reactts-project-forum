@@ -26,7 +26,6 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
               lastModifiedOn={ti.createdOn}
               points={ti.points}
               readOnly={readOnly}
-              userId={ti?.user.id || "0"}
               threadItemId={ti?.id || "0"}
               refreshThread={refreshThread}
             />
