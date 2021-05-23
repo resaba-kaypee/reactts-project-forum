@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Main.css";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
 import ThreadPointsInline from "../../points/ThreadPointsInline";
+import RichEditor from "../../editor/RichEditor";
 
 interface ThreadCardProps {
   thread: Thread;
@@ -60,7 +61,7 @@ const ThreadCard: FC<ThreadCardProps> = ({ thread }) => {
             className="threadcard-body"
             onClick={onClickShowThread}
             data-thread-id={thread.id}>
-            <div>{thread.body}</div>
+            <RichEditor existingBody={thread.body} readOnly={true} />
           </div>
           <div className="threadcard-footer">
             <span style={{ marginRight: ".5em" }}>

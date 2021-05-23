@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { gql, useLazyQuery } from "@apollo/client";
+import React, { useEffect, useState, useReducer } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
+import { getTextFromNodes } from "../../editor/RichEditor";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../store/AppState";
+import { Node } from "slate";
 import "./Thread.css";
 import Nav from "../../areas/Nav";
 import ThreadModel from "../../../models/Thread";
@@ -10,8 +15,8 @@ import ThreadTitle from "./ThreadTitle";
 import ThreadBody from "./ThreadBody";
 import ThreadResponseBuilder from "./ThreadResponseBuilder";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
-import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
 import ThreadPointsInline from "../../points/ThreadPointsInline";
+import Category from "../../../models/Category";
 
 const GetThreadById = gql`
   query GetThreadById($id: ID!) {
@@ -48,6 +53,41 @@ const GetThreadById = gql`
   }
 `;
 
+const CreateThread = gql`
+  mutation createThread(
+    $userId: ID!
+    $categoryId: ID!
+    $title: String!
+    $body: String!
+  ) {
+    createThread(
+      userId: $userId
+      categoryId: $categoryId
+      title: $title
+      body: $body
+    ) {
+      messages
+    }
+  }
+`;
+
+const threadReducer = (state: any, action: any) => {
+  switch (action.type) {
+    case "userId":
+      return { ...state, userId: action.payload };
+    case "category":
+      return { ...state, category: action.payload };
+    case "title":
+      return { ...state, title: action.payload };
+    case "body":
+      return { ...state, body: action.payload };
+    case "bodyNode":
+      return { ...state, bodyNode: action.payload };
+    default:
+      throw new Error("Unknown action type");
+  }
+};
+
 const Thread = () => {
   const { width } = useWindowDimensions();
   const [
@@ -58,10 +98,22 @@ const Thread = () => {
       data: threadData,
     },
   ] = useLazyQuery(GetThreadById, { fetchPolicy: "no-cache" });
+  const [execCreateThread] = useMutation(CreateThread);
 
   const [thread, setThread] = useState<ThreadModel | undefined>();
   const [readOnly, setReadOnly] = useState(false);
   const { id } = useParams<{ id: any }>();
+  const user = useSelector((state: AppState) => state.user);
+  const [{ userId, category, title, bodyNode }, threadReducerDispatch] =
+    useReducer(threadReducer, {
+      userId: user ? user.id : "0",
+      category: undefined,
+      title: "",
+      body: "",
+      bodyNode: undefined,
+    });
+  const [postMsg, setPostMsg] = useState("");
+  const history = useHistory();
 
   const refreshThread = () => {
     console.log("refreshed");
@@ -86,6 +138,13 @@ const Thread = () => {
   }, [id, execGetThreadById]);
 
   useEffect(() => {
+    threadReducerDispatch({
+      type: "userId",
+      payload: user ? user.id : "0",
+    });
+  }, [user]);
+
+  useEffect(() => {
     if (threadData && threadData.getThreadById) {
       setThread(threadData.getThreadById);
       setReadOnly(true);
@@ -95,6 +154,72 @@ const Thread = () => {
     }
     // eslint-disable-next-line
   }, [threadData]);
+
+  const receiveSelectedCategory = (cat: Category) => {
+    threadReducerDispatch({
+      type: "category",
+      payload: cat,
+    });
+  };
+
+  const receiveTitle = (updatedTitle: string) => {
+    threadReducerDispatch({
+      type: "title",
+      payload: updatedTitle,
+    });
+  };
+
+  const receiveBody = (body: Node[]) => {
+    threadReducerDispatch({
+      type: "bodyNode",
+      payload: body,
+    });
+    threadReducerDispatch({
+      type: "body",
+      payload: getTextFromNodes(body),
+    });
+  };
+
+  const onClickPost = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    console.log("bodyNode: ", getTextFromNodes(bodyNode));
+    if (!userId || userId === "0") {
+      setPostMsg("You must be logged in before you can post.");
+    } else if (!category) {
+      setPostMsg("Please select a category for your post.");
+    } else if (!title) {
+      setPostMsg("Please enter a title.");
+    } else if (!bodyNode) {
+      setPostMsg("Please enter a body.");
+    } else {
+      setPostMsg("");
+
+      const newThread = {
+        userId,
+        categoryId: category?.id,
+        title,
+        body: JSON.stringify(bodyNode),
+      };
+
+      const { data: createThreadMsg } = await execCreateThread({
+        variables: newThread,
+      });
+
+      if (
+        createThreadMsg.createThread &&
+        createThreadMsg.createThread.messages &&
+        !isNaN(createThreadMsg.createThread.messages[0])
+      ) {
+        setPostMsg("Thread posted successfully.");
+        history.push(`/thread/${createThreadMsg.createThread.messages[0]}`);
+      } else {
+        setPostMsg(createThreadMsg.createThread.messages[0]);
+      }
+    }
+  };
 
   return (
     <div className="screen-root-container">
@@ -112,13 +237,34 @@ const Thread = () => {
             />
           ) : null}
           <ThreadHeader
-            userName={thread?.user.userName}
+            userName={thread ? thread.user.userName : user?.userName}
             lastModifiedOn={thread ? thread.lastModifiedOn : new Date()}
-            title={thread?.title}
+            title={thread ? thread.title : title}
           />
-          <ThreadCategory category={thread?.category} />
-          <ThreadTitle title={thread?.title} />
-          <ThreadBody body={thread?.body} readOnly={readOnly} />
+          <ThreadCategory
+            category={thread ? thread.category : category}
+            sendOutSelectedCategory={receiveSelectedCategory}
+          />
+          <ThreadTitle
+            title={thread ? thread.title : ""}
+            readOnly={thread ? readOnly : false}
+            sendOutTitle={receiveTitle}
+          />
+          <ThreadBody
+            body={thread ? thread.body : ""}
+            readOnly={thread ? readOnly : false}
+            sendOutBody={receiveBody}
+          />
+          {thread ? null : (
+            <>
+              <div style={{ marginTop: ".5em" }}>
+                <button className="action-btn" onClick={onClickPost}>
+                  Post
+                </button>
+              </div>
+              <strong>{postMsg}</strong>
+            </>
+          )}
         </div>
         <div className="thread-content-points-container">
           <ThreadPointsBar
