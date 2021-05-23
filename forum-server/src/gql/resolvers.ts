@@ -282,11 +282,9 @@ const resolvers: IResolvers = {
       let result = "";
 
       try {
-        // TODOS remove the comment once the session is setup
         if (!ctx.req.session || !ctx.req.session?.userId) {
           return "You must be logged in to set likes.";
         }
-
         result = await updateThreadItemPoint(
           ctx.req.session!.userId,
           args.threadItemId,
