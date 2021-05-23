@@ -29,7 +29,7 @@ export const createThread = async (
   const thread = await Thread.create({ title, body, user, category }).save();
   if (!thread) return { messages: ["Failed to create thread."] };
 
-  return { messages: ["Thread created successfully."] };
+  return { messages: [thread.id] };
 };
 
 export const getThreadById = async (
@@ -92,8 +92,6 @@ export const getThreadsLatest = async (): Promise<QueryArrayResult<Thread>> => {
       messages: ["No threads found"],
     };
   }
-
-  console.log(threads);
   return {
     entities: threads,
   };
