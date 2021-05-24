@@ -15,8 +15,7 @@ console.log(process.env.NODE_ENV);
 
 declare module "express-session" {
   export interface SessionData {
-    userId: any;
-    loadedCount: number;
+    userId?: any;
   }
 }
 
