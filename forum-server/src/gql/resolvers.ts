@@ -1,17 +1,20 @@
 import { updateThreadItemPoint } from "./../repo/ThreadItemPointRepo";
 import { ThreadCategory } from "./../repo/ThreadCategory";
 import { updateThreadPoint } from "./../repo/ThreadPointRepo";
-import { createThread } from "./../repo/ThreadRepo";
 import { Thread } from "./../repo/Thread";
 import { IResolvers } from "apollo-server-express";
 import { QueryOneResult, QueryArrayResult } from "../repo/QueryArrayResult";
 import {
+  createThread,
   getThreadById,
   getThreadsByCategoryId,
   getThreadsLatest,
 } from "../repo/ThreadRepo";
 import { GqlContext } from "./GqlContext";
-import { getThreadItemsByThreadId } from "../repo/ThreadItemRepos";
+import {
+  createThreadItem,
+  getThreadItemsByThreadId,
+} from "../repo/ThreadItemRepos";
 import { ThreadItem } from "../repo/ThreadItem";
 import { getAllCategories } from "../repo/ThreadCategoryRepos";
 import CategoryThread from "../repo/CategoryThread";
@@ -48,6 +51,15 @@ const resolvers: IResolvers = {
         return "EntityResult";
       }
       return "ThreadArray";
+    },
+  },
+
+  ThreadItemResult: {
+    __resolveType(obj: any, context: GqlContext, infor: any) {
+      if (obj.messages) {
+        return "EntityResult";
+      }
+      return "ThreadItem";
     },
   },
 
@@ -228,17 +240,54 @@ const resolvers: IResolvers = {
   Mutation: {
     createThread: async (
       obj: any,
-      args: { userId: string; categoryId: string; title: string; body: string },
+      args: { categoryId: string; title: string; body: string },
       ctx: GqlContext,
       info: any
     ): Promise<EntityResult> => {
       let result: QueryOneResult<Thread>;
 
       try {
+        if (!ctx.req.session.userId) {
+          console.log("no session userId");
+          return {
+            messages: ["You must be logged in to create a thread."],
+          };
+        }
+
         result = await createThread(
-          args.userId,
+          ctx.req.session!.userId,
           args.categoryId,
           args.title,
+          args.body
+        );
+
+        return {
+          messages: result.messages ? result.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    createThreadItem: async (
+      obj: any,
+      args: { threadId: string; body: string },
+      ctx: GqlContext,
+      info: any
+    ): Promise<EntityResult> => {
+      let result: QueryOneResult<ThreadItem>;
+      try {
+        if (!ctx.req.session!.userId) {
+          console.log("no session userId");
+          return {
+            messages: ["You must be logged in to response to a thread."],
+          };
+        }
+
+        result = await createThreadItem(
+          ctx.req.session!.userId,
+          args.threadId,
           args.body
         );
 
