@@ -17,6 +17,7 @@ import ThreadResponseBuilder from "./ThreadResponseBuilder";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
 import ThreadPointsInline from "../../points/ThreadPointsInline";
 import Category from "../../../models/Category";
+import ThreadResponse from "./ThreadResponse";
 
 const GetThreadById = gql`
   query GetThreadById($id: ID!) {
@@ -54,18 +55,8 @@ const GetThreadById = gql`
 `;
 
 const CreateThread = gql`
-  mutation createThread(
-    $userId: ID!
-    $categoryId: ID!
-    $title: String!
-    $body: String!
-  ) {
-    createThread(
-      userId: $userId
-      categoryId: $categoryId
-      title: $title
-      body: $body
-    ) {
+  mutation createThread($categoryId: ID!, $title: String!, $body: String!) {
+    createThread(categoryId: $categoryId, title: $title, body: $body) {
       messages
     }
   }
@@ -278,14 +269,34 @@ const Thread = () => {
           />
         </div>
       </div>
-      <div className="thread-content-response-container">
-        <hr className="thread-section-divider" />
-        <ThreadResponseBuilder
-          threadItems={thread?.threadItems}
-          readOnly={readOnly}
-          refreshThread={refreshThread}
-        />
-      </div>
+      {thread ? (
+        <div className="thread-content-response-container">
+          <hr className="thread-section-divider" />
+          <div style={{ marginBottom: ".5em" }}>
+            <strong>Post Response</strong>
+          </div>
+          <ThreadResponse
+            body={""}
+            userName={user?.userName}
+            lastModifiedOn={new Date()}
+            points={0}
+            readOnly={false}
+            threadId={thread.id}
+            threadItemId={"0"}
+            refreshThread={refreshThread}
+          />
+        </div>
+      ) : null}
+      {thread ? (
+        <div className="thread-content-response-container">
+          <hr className="thread-section-divider" />
+          <ThreadResponseBuilder
+            threadItems={thread?.threadItems}
+            readOnly={readOnly}
+            refreshThread={refreshThread}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

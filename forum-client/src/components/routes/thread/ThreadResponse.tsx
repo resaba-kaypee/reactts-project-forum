@@ -1,42 +1,115 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import { Node } from "slate";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../store/AppState";
 import RichEditor from "../../editor/RichEditor";
 import ThreadPointsInline from "../../points/ThreadPointsInline";
 import UserNameAndTime from "./UserNameAndTime";
 
+const CreateThreadItem = gql`
+  mutation createThreadItem($threadId: ID!, $body: String!) {
+    createThreadItem(threadId: $threadId, body: $body) {
+      messages
+    }
+  }
+`;
+
 interface ThreadResponseProps {
   body?: string;
   userName?: string;
+  threadId?: string;
   threadItemId: string;
-  lastModifiedOn?: Date;
   points: number;
+  lastModifiedOn?: Date;
   readOnly: boolean;
   refreshThread?: () => void;
 }
 const ThreadResponse: FC<ThreadResponseProps> = ({
   body,
   userName,
+  threadId,
   threadItemId,
-  lastModifiedOn,
   points,
+  lastModifiedOn,
   readOnly,
   refreshThread,
 }) => {
+  const user = useSelector((state: AppState) => state.user);
+  const [execCreateThreadItem] = useMutation(CreateThreadItem);
+  const [postMsg, setPostMsg] = useState("");
+  const [bodyToSave, setBodyToSave] = useState("");
+
+  useEffect(() => {
+    if (body) {
+      setBodyToSave(body || "");
+    }
+  }, [body]);
+
+  const onClickPost = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    if (!user) {
+      setPostMsg("Please login before adding a response.");
+    } else if (!threadId) {
+      setPostMsg("A parent thread must exist before a response can be posted.");
+    } else if (!bodyToSave) {
+      setPostMsg("Please enter some text.");
+    } else {
+      await execCreateThreadItem({
+        variables: {
+          userId: user ? user.id : "0",
+          threadId,
+          body: bodyToSave,
+        },
+      });
+
+      refreshThread && refreshThread();
+    }
+  };
+
+  const receiveBody = (body: Node[]) => {
+    const newBody = JSON.stringify(body);
+    if (bodyToSave !== newBody) {
+      setBodyToSave(newBody);
+    }
+  };
+
   return (
     <div>
       <div>
         <UserNameAndTime userName={userName} lastModifiedOn={lastModifiedOn} />
-        <span style={{ marginLeft: "1em" }}>
-          <ThreadPointsInline
-            points={points || 0}
-            threadItemId={threadItemId}
-            allowUpdatePoints={true}
-            refreshThread={refreshThread}
-          />
-        </span>
+        {threadItemId}
+        {readOnly ? (
+          <span style={{ display: "inline-block", marginLeft: "1em" }}>
+            <ThreadPointsInline
+              points={points || 0}
+              threadItemId={threadItemId}
+              allowUpdatePoints={true}
+              refreshThread={refreshThread}
+            />
+          </span>
+        ) : null}
       </div>
       <div className="thread-body-editor">
-        <RichEditor existingBody={body} readOnly={readOnly} />
+        <RichEditor
+          existingBody={bodyToSave}
+          readOnly={readOnly}
+          sendOutBody={receiveBody}
+        />
       </div>
+      {!readOnly && threadId ? (
+        <>
+          <div style={{ marginTop: ".5em" }}>
+            <button className="action-btn" onClick={onClickPost}>
+              Post Response
+            </button>
+          </div>
+          <strong>{postMsg}</strong>
+        </>
+      ) : null}
     </div>
   );
 };
