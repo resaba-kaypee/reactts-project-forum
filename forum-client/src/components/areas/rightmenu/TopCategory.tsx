@@ -23,7 +23,7 @@ const TopCategory: FC<TopCategoryProps> = ({ topCategories }) => {
   return (
     <div className="topcat-item-container">
       <div>
-        <strong>{topCategories[0].category}</strong>
+        <strong>{topCategories[0].categoryName}</strong>
       </div>
       {threads}
     </div>
