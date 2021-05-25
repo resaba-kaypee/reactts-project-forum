@@ -4,9 +4,15 @@
   "description": "A simple forum created in React, Typescript, GraphQL and Postgres.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "client": "npm start --prefix forum-client",
+    "server": "npm start --prefix forum-server"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "react",
+    "typescript",
+    "graphql",
+    "postgres"
+  ],
+  "author": "kaypee resaba",
   "license": "ISC"
 }

@@ -48,7 +48,10 @@ const SideBarMenus = () => {
           <>
             <li>
               <FontAwesomeIcon icon={faRegistered} />
-              <span className="menu-name" onClick={onClickToggleRegister}>
+              <span
+                style={{ cursor: "pointer" }}
+                className="menu-name"
+                onClick={onClickToggleRegister}>
                 register
               </span>
               <Registration
@@ -58,7 +61,10 @@ const SideBarMenus = () => {
             </li>
             <li>
               <FontAwesomeIcon icon={faSignInAlt} />
-              <span onClick={onClickToggleLogin} className="menu-name">
+              <span
+                style={{ cursor: "pointer" }}
+                onClick={onClickToggleLogin}
+                className="menu-name">
                 login
               </span>
               <Login isOpen={showLogin} onClickToggle={onClickToggleLogin} />
@@ -68,7 +74,10 @@ const SideBarMenus = () => {
         {user ? (
           <li>
             <FontAwesomeIcon icon={faSignOutAlt} />
-            <span onClick={onClickToggleLogout} className="menu-name">
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={onClickToggleLogout}
+              className="menu-name">
               logout
             </span>
             <Logout isOpen={showLogout} onClickToggle={onClickToggleLogout} />
