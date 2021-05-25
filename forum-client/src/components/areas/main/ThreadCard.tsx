@@ -70,12 +70,10 @@ const ThreadCard: FC<ThreadCardProps> = ({ thread }) => {
                 <FontAwesomeIcon className="icon-lg" icon={faEye} />
               </label>
             </span>
-            <span>
-              {width <= 768 ? (
-                <ThreadPointsInline points={thread?.points || 0} />
-              ) : null}
-              {getResponses(thread)}
-            </span>
+            {width <= 768 ? (
+              <ThreadPointsInline points={thread?.points || 0} />
+            ) : null}
+            {getResponses(thread)}
           </div>
         </div>
       </div>
