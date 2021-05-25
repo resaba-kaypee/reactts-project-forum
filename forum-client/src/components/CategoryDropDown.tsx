@@ -24,7 +24,6 @@ const CategoryDropDown: FC<CategoryDropDownProps> = ({
   preselectedCategory,
 }) => {
   const categories = useSelector((state: AppState) => state.categories);
-  console.log(categories);
 
   const [categoryOptions, setCategoryOptions] = useState<
     Array<string | Option>
