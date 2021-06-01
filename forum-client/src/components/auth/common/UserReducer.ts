@@ -13,7 +13,7 @@ const userReducer = (state: any, action: any) => {
     case "isSubmitDisabled":
       return { ...state, isSubmitDisabled: action.payload };
     default:
-      return { ...state, resultMsg: "A failure has occurred." };
+      return { ...state, resultMsg: "" };
   }
 };
 
