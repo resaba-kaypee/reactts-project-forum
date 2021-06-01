@@ -57,7 +57,7 @@ const PasswordComparison: FC<PasswordComparisonProps> = ({
         />
       </div>
       <div>
-        <label htmlFor="passwordconfirm">password confirmantion</label>
+        <label htmlFor="passwordconfirm">password confirmation</label>
         <input
           name="passwordconfirm"
           type="password"
