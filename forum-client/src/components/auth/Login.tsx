@@ -49,17 +49,38 @@ const Login: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    onClickToggle(e);
 
-    await execLogin({
-      variables: {
-        email,
-        password,
-      },
-    });
+    if (
+      !email ||
+      email.trim().length < 0 ||
+      !password ||
+      password.trim().length < 0
+    ) {
+      dispatch({ type: "resultMsg", payload: "Fields cannot be empty." });
+      setTimeout(() => {
+        dispatch({ type: "resultMsg", payload: "" });
+      }, 2000);
+    } else {
+      const { data }: any = await execLogin({
+        variables: {
+          email,
+          password,
+        },
+      });
 
-    execMe();
-    updateMe();
+      if (data && data?.login) {
+        if (
+          data.login.startsWith("User") ||
+          data.login.startsWith("Password")
+        ) {
+          dispatch({ type: "resultMsg", payload: data.login });
+        } else if (data.login.startsWith("Log")) {
+          execMe();
+          updateMe();
+          onClickToggle(e);
+        }
+      }
+    }
   };
 
   const onClickCancel = (

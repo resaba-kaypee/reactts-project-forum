@@ -5,12 +5,6 @@ export const allowSubmit = (
   msg: string,
   setDisabled: boolean
 ) => {
-  dispatch({
-    type: "isSubmitDisabled",
-    payload: setDisabled,
-  });
-  dispatch({
-    type: msg,
-    payload: "resutMsg",
-  });
+  dispatch({ type: "isSubmitDisabled", payload: setDisabled });
+  dispatch({ type: msg, payload: "resutMsg" });
 };
