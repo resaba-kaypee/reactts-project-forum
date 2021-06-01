@@ -24,7 +24,7 @@ const Logout: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
   });
   const { deleteMe } = useRefreshReduxMe();
 
-  const onClickLogin = async (
+  const onClickLogout = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
@@ -57,8 +57,8 @@ const Logout: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
             <button
               style={{ marginLeft: ".5em" }}
               className="action-btn"
-              onClick={onClickLogin}>
-              Login
+              onClick={onClickLogout}>
+              Logout
             </button>
             <button
               style={{ marginLeft: ".5em" }}
