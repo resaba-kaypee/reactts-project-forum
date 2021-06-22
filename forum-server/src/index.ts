@@ -1,5 +1,4 @@
-import express, {Express, RequestHandler} from "express";
-import * as dotenv from "dotenv";
+import express, { Express, RequestHandler } from "express";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
@@ -8,8 +7,8 @@ import cors from "cors";
 import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
 import typeDefs from "./gql/typeDefs";
 import resolvers from "./gql/resolvers";
-
-dotenv.config({ path: `${__dirname}/config.env` });
+import { loadEnv } from "./common/envLoader";
+loadEnv();
 
 console.log(process.env.NODE_ENV);
 
