@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev --respawn src/index.ts"
+    "start": "ts-node-dev --respawn src/index.ts",
+    "build": "del-cli dist && cpy dev-config/* dist && cpy dev-config/.env dist && tsc"
   },
   "keywords": [
     "graphql",
