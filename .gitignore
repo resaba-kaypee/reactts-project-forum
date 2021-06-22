@@ -11,6 +11,7 @@
 # production
 /build
 /redis
+/Chap17
 
 # misc
 .DS_Store
@@ -20,9 +21,11 @@
 .env.production.local
 *.pdf
 *.sql
+*.rdb
 config.env
 continue.md
 settings.json
+postgresql notes.md
 
 npm-debug.log*
 yarn-debug.log*

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "client": "npm start --prefix forum-client",
-    "server": "npm start --prefix forum-server"
+    "server": "npm start --prefix forum-server",
+    "redis": "./redis/redis-6.2.4/src/redis-server ./redis/etc/redis.conf"
   },
   "keywords": [
     "react",
