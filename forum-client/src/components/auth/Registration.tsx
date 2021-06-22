@@ -5,15 +5,24 @@ import { ModalProps } from "../../types/ModalProps";
 import { allowSubmit } from "./common/Helpers";
 import "./Auth.css";
 import PasswordComparison from "./common/PasswordComparison";
+import { gql, useMutation } from "@apollo/client";
+
+const RegisterMutation = gql`
+  mutation register($email: String!, $userName: String!, $password: String!){
+    register(email: $email, userName: $userName, password: $password)
+  }
+`
 
 const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
+  const [execRegister] = useMutation(RegisterMutation)
+
   const [
     { userName, password, email, passwordConfirm, resultMsg, isSubmitDisabled },
     dispatch,
   ] = useReducer(userReducer, {
-    userName: "raven",
+    userName: "",
     password: "",
-    email: "admin@dzraven.com",
+    email: "",
     passwordConfirm: "",
     resultMsg: "",
     isSubmitDisabled: true,
@@ -22,16 +31,18 @@ const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
   const onChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ payload: e.target.value, type: "userName" });
 
+    console.log(!e.target.value, "must be false")
     if (!e.target.value) {
       allowSubmit(dispatch, "Username cannot be empty.", true);
     } else {
       allowSubmit(dispatch, "", false);
     }
   };
-
+  
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({ payload: e.target.value, type: "email" });
-
+    
+    console.log(!e.target.value, "must be false")
     if (!e.target.value) {
       allowSubmit(dispatch, "Email cannot be empty.", true);
     } else {
@@ -39,11 +50,23 @@ const Registration: FC<ModalProps> = ({ isOpen, onClickToggle }) => {
     }
   };
 
-  const onClickRegister = (
+  const onClickRegister = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    onClickToggle(e);
+    try {
+      const result = await execRegister({
+        variables: {
+          email,
+          userName,
+          password
+        }
+      })
+      dispatch({payload: result.data.register, type: "resultMsg"})
+    } catch (ex) {
+      console.log(ex)
+    }
+    // onClickToggle(e);
   };
 
   const onClickCancel = (
