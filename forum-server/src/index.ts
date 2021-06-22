@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Express, RequestHandler} from "express";
 import * as dotenv from "dotenv";
 import session from "express-session";
 import connectRedis from "connect-redis";
@@ -20,7 +20,7 @@ declare module "express-session" {
 }
 
 const main = async () => {
-  const app = express();
+  const app: Express = express();
 
   console.log(`client url: ${process.env.CLIENT_URL}`);
   app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
@@ -39,7 +39,7 @@ const main = async () => {
   const redisStore = new RedisStore({ client: redis });
 
   // body parser
-  app.use(express.json({ limit: "10kb" }));
+  app.use(express.json({ limit: "10kb" }) as RequestHandler);
 
   app.use(
     session({
