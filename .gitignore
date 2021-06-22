@@ -12,6 +12,7 @@
 /build
 /redis
 /Chap17
+/files
 
 # misc
 .DS_Store
