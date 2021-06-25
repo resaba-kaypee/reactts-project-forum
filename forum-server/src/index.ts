@@ -10,7 +10,9 @@ import resolvers from "./gql/resolvers";
 import { loadEnv } from "./common/envLoader";
 loadEnv();
 
-console.log(process.env.NODE_ENV);
+console.log(
+  process.env.TS_NODE_DEV ? "development mode" : process.env.NODE_ENV
+); // if running in ts-node
 
 declare module "express-session" {
   export interface SessionData {

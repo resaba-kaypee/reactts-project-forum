@@ -1,6 +1,6 @@
-const dotenv = require("dotenv");
-dotenv.config({ path: `${__dirname}/.env` });
-const entitiesPath = `${__dirname}/` + process.env.PG_ENTITIES;
+require("dotenv").config();
+const entitiesPath = `${__dirname}/${process.env.PG_ENTITIES}`;
+console.log("Entities path", entitiesPath);
 
 module.exports = [
   {
