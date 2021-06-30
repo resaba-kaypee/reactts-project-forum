@@ -12,7 +12,7 @@ import {
 import Registration from "../../auth/Registration";
 import Login from "../../auth/Login";
 import Logout from "../../auth/Logout";
-import "./SideBarMenu.css";
+import "./UserMenu.css";
 
 const SideBarMenus = () => {
   const [showRegister, setShowRegister] = useState(false);
