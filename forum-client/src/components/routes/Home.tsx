@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import Nav from "../areas/Nav";
-import SideBar from "../areas/sidebar/SideBar";
 import LeftMenu from "../areas/leftmenu/LeftMenu";
 import Main from "../areas/main/Main";
 import RightMenu from "../areas/rightmenu/RightMenu";
@@ -12,7 +11,6 @@ const Home: FC = () => {
       <div className="navigation">
         <Nav />
       </div>
-      <SideBar />
       <LeftMenu />
       <Main />
       <RightMenu />

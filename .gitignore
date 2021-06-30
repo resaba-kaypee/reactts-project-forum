@@ -25,10 +25,12 @@
 *.pdf
 *.sql
 *.rdb
+*.old
 config.env
 continue.md
 settings.json
 postgresql notes.md
+TODOS.md
 
 npm-debug.log*
 yarn-debug.log*

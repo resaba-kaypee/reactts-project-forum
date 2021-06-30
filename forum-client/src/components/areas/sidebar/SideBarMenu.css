@@ -1,3 +1,17 @@
+.user-menu {
+  display: flex;
+}
+
+.user-menu li {
+  margin-left: 0.2em;
+}
+
 .menu-name {
-  margin-left: 0.5em;
+  cursor: pointer;
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  .user-menu {
+    display: block;
+  }
 }

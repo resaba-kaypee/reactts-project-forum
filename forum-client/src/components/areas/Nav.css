@@ -1,4 +1,6 @@
 nav {
+  display: flex;
+  justify-content: space-between;
   padding-top: 0.75em;
   padding-bottom: 0.75em;
   padding-left: 1em;
@@ -6,6 +8,26 @@ nav {
   border-bottom: var(--border);
 }
 
+.user-menu li {
+  margin-left: 2em;
+}
+
 .nav-mobile-menu {
   margin-right: 1em;
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  nav {
+    display: block;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+    padding-left: 1em;
+    padding-right: 1em;
+    border-bottom: var(--border);
+  }
+
+  .user-menu li {
+    margin-left: 0.5em;
+    margin-bottom: 2em;
+  }
 }

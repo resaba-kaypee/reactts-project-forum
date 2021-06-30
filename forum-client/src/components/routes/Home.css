@@ -4,6 +4,7 @@
   grid-template-rows: 2.75rem 3fr;
   grid-template-areas:
     "nav nav nav nav"
+    "nav nav nav nav"
     "sidebar leftmenu content rightmenu";
   gap: 0.75rem 0.4rem;
 }
