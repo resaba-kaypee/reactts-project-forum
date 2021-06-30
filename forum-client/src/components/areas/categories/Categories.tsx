@@ -12,7 +12,7 @@ const GetAllCategories = gql`
   }
 `;
 
-const LeftMenu = () => {
+const Categories = () => {
   const { loading, error, data } = useQuery(GetAllCategories);
   const { width } = useWindowDimensions();
   const [categories, setCategories] = useState<JSX.Element>(
@@ -29,12 +29,16 @@ const LeftMenu = () => {
         const cats = data.getAllCategories.map((cat: any) => {
           return (
             <li key={cat.id}>
-              <Link to={`/categorythreads/${cat.id}`}>{cat.name}</Link>
+              <Link
+                to={`/categorythreads/${cat.id}`}
+                style={{ textDecoration: "underline", color: "inherit" }}>
+                {cat.name}
+              </Link>
             </li>
           );
         });
 
-        setCategories(<ul className="category">{cats}</ul>);
+        setCategories(<ul className="categories-list">{cats}</ul>);
       }
     }
     // eslint-disable-next-line
@@ -42,7 +46,7 @@ const LeftMenu = () => {
 
   if (width <= 768) return null;
 
-  return <div className="leftmenu">{categories}</div>;
+  return <div className="categories">{categories}</div>;
 };
 
-export default LeftMenu;
+export default Categories;

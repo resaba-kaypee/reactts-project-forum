@@ -2,10 +2,11 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useWindowDimensions } from "../../hooks/useWindowDimensions";
+import { Link } from "react-router-dom";
 import ReactModal from "react-modal";
-import SideBarMenus from "./sidebar/SideBarMenus";
+import UserMenus from "./usermenu/UserMenus";
+import Categories from "./categories/Categories";
 import "./Nav.css";
-import SideBar from "./sidebar/SideBar";
 
 const Nav = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -21,19 +22,19 @@ const Nav = () => {
             size="lg"
             className="nav-mobile-menu"
           />
-          <a href="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Link to={"/"} style={{ textDecoration: "none", color: "inherit" }}>
             <h1 style={{ fontSize: "1em", display: "inline" }}>ProjectForum</h1>
-          </a>
+          </Link>
         </>
       );
     }
 
     return (
       <>
-        <a href="/" style={{ textDecoration: "none", color: "inherit" }}>
+        <Link to={"/"} style={{ textDecoration: "none", color: "inherit" }}>
           <h1>ProjectForum</h1>
-        </a>
-        <SideBarMenus />
+        </Link>
+        <UserMenus />
       </>
     );
   };
@@ -56,9 +57,10 @@ const Nav = () => {
         onRequestClose={onRequestClose}
         shouldCloseOnOverlayClick={true}
         ariaHideApp={false}>
-        <SideBarMenus />
+        <UserMenus />
       </ReactModal>
       <nav>{getMenu()}</nav>
+      <Categories />
     </div>
   );
 };

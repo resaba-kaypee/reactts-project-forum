@@ -5,11 +5,20 @@ nav {
   padding-bottom: 0.75em;
   padding-left: 1em;
   padding-right: 1em;
-  border-bottom: var(--border);
 }
 
 .user-menu li {
   margin-left: 2em;
+}
+
+.categories-list {
+  display: flex;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.categories-list li {
+  margin-right: 0.5em;
 }
 
 .nav-mobile-menu {
