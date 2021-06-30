@@ -14,7 +14,7 @@ import Login from "../../auth/Login";
 import Logout from "../../auth/Logout";
 import "./UserMenu.css";
 
-const SideBarMenus = () => {
+const UserMenus = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -76,4 +76,4 @@ const SideBarMenus = () => {
   );
 };
 
-export default SideBarMenus;
+export default UserMenus;
