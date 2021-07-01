@@ -1,0 +1,26 @@
+.user-menu {
+  display: flex;
+  align-content: baseline;
+  padding-left: 0;
+  margin: auto 0 auto 0;
+}
+
+.user-menu li {
+  margin: auto 0 auto 1em;
+  margin-left: 1em;
+}
+
+.menu-name {
+  cursor: pointer;
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  .user-menu {
+    display: block;
+  }
+
+  .user-menu li {
+    margin-left: 0.5em;
+    margin-bottom: 2em;
+  }
+}

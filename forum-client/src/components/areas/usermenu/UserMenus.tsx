@@ -12,9 +12,9 @@ import {
 import Registration from "../../auth/Registration";
 import Login from "../../auth/Login";
 import Logout from "../../auth/Logout";
-import "./SideBarMenu.css";
+import "./UserMenu.css";
 
-const SideBarMenus = () => {
+const UserMenus = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
@@ -35,11 +35,11 @@ const SideBarMenus = () => {
 
   return (
     <>
-      <ul>
+      <ul className="user-menu">
         {user ? (
           <li>
-            <FontAwesomeIcon icon={faUser} />
             <span className="menu-name">
+              <FontAwesomeIcon icon={faUser} />{" "}
               <Link to={`/userprofile/${user?.id}`}>{user?.userName}</Link>
             </span>
           </li>
@@ -47,38 +47,26 @@ const SideBarMenus = () => {
         {user ? null : (
           <>
             <li>
-              <FontAwesomeIcon icon={faRegistered} />
-              <span
-                style={{ cursor: "pointer" }}
-                className="menu-name"
-                onClick={onClickToggleRegister}>
-                register
+              <span onClick={onClickToggleLogin} className="menu-name">
+                <FontAwesomeIcon icon={faSignInAlt} /> login
+              </span>
+              <Login isOpen={showLogin} onClickToggle={onClickToggleLogin} />
+            </li>
+            <li>
+              <span className="action-btn" onClick={onClickToggleRegister}>
+                <FontAwesomeIcon icon={faRegistered} /> register
               </span>
               <Registration
                 isOpen={showRegister}
                 onClickToggle={onClickToggleRegister}
               />
             </li>
-            <li>
-              <FontAwesomeIcon icon={faSignInAlt} />
-              <span
-                style={{ cursor: "pointer" }}
-                onClick={onClickToggleLogin}
-                className="menu-name">
-                login
-              </span>
-              <Login isOpen={showLogin} onClickToggle={onClickToggleLogin} />
-            </li>
           </>
         )}
         {user ? (
           <li>
-            <FontAwesomeIcon icon={faSignOutAlt} />
-            <span
-              style={{ cursor: "pointer" }}
-              onClick={onClickToggleLogout}
-              className="menu-name">
-              logout
+            <span onClick={onClickToggleLogout} className="action-btn">
+              <FontAwesomeIcon icon={faSignOutAlt} /> logout
             </span>
             <Logout isOpen={showLogout} onClickToggle={onClickToggleLogout} />
           </li>
@@ -88,4 +76,4 @@ const SideBarMenus = () => {
   );
 };
 
-export default SideBarMenus;
+export default UserMenus;
