@@ -86,8 +86,9 @@ const Main = () => {
   const { categoryId } = useParams<any>();
 
   const [category, setCategory] = useState<Category | undefined>();
-  const [threadCards, setThreadCards] =
-    useState<Array<JSX.Element> | null>(null);
+  const [threadCards, setThreadCards] = useState<Array<JSX.Element> | null>(
+    null
+  );
 
   const history = useHistory();
 
@@ -148,7 +149,7 @@ const Main = () => {
   return (
     <main className="content">
       <button className="action-btn" onClick={onClickPostThread}>
-        Post
+        Write a new topic
       </button>
       <MainHeader category={category} />
       <div>{threadCards}</div>

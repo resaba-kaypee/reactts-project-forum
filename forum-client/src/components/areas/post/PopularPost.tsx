@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
+import { gql, useQuery } from "@apollo/client";
 import TopCategory from "./TopCategory";
 import groupBy from "lodash/groupBy";
-import "./RightMenu.css";
-import { gql, useQuery } from "@apollo/client";
+import "./PopularPost.css";
 
 const GetTopCategories = gql`
   query getTopCategories {
@@ -16,12 +16,13 @@ const GetTopCategories = gql`
   }
 `;
 
-const RightMenu = () => {
+const PopularPost = () => {
   const { data: categoryThreadData } = useQuery(GetTopCategories);
 
   const { width } = useWindowDimensions();
-  const [topCategories, setTopCategories] =
-    useState<Array<JSX.Element> | undefined>();
+  const [topCategories, setTopCategories] = useState<
+    Array<JSX.Element> | undefined
+  >();
 
   useEffect(() => {
     if (categoryThreadData && categoryThreadData.getTopCategories) {
@@ -41,7 +42,12 @@ const RightMenu = () => {
 
   if (width <= 768) return null;
 
-  return <div className="rightmenu rightmenu-container">{topCategories}</div>;
+  return (
+    <div className="rightmenu rightmenu-container">
+      <h2>Popular Posts</h2>
+      {topCategories}
+    </div>
+  );
 };
 
-export default RightMenu;
+export default PopularPost;

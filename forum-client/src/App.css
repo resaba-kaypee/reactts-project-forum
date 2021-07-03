@@ -117,7 +117,6 @@ input[type="submit"]:hover {
   border: solid var(--panel-border-thickness) var(--border-color);
   border-radius: 0.07em;
   background-color: var(--panel-color);
-
   white-space: wrap;
   overflow: hidden;
   text-overflow: ellipsis;

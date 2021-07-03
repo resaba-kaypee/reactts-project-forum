@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import Nav from "../areas/Nav";
 import Main from "../areas/main/Main";
-import RightMenu from "../areas/rightmenu/RightMenu";
+import PopularPost from "../areas/post/PopularPost";
 import "./Home.css";
 
 const Home: FC = () => {
@@ -11,7 +11,7 @@ const Home: FC = () => {
         <Nav />
       </div>
       <Main />
-      <RightMenu />
+      <PopularPost />
     </div>
   );
 };

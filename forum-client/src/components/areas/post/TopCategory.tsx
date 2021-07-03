@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from "react";
 import CategoryThread from "../../../models/CategoryThread";
-import "./RightMenu.css";
+import "./PopularPost";
 interface TopCategoryProps {
   topCategories: Array<CategoryThread>;
 }
