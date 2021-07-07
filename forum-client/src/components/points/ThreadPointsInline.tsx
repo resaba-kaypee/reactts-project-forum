@@ -1,12 +1,12 @@
-import React, { FC } from "react";
-import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { gql, useMutation } from "@apollo/client";
 import {
   faChevronDown,
   faChevronUp,
   faHeart,
 } from "@fortawesome/free-solid-svg-icons";
-import { gql, useMutation } from "@apollo/client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { FC } from "react";
+import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
 
 const UpdateThreadItemPoint = gql`
   mutation UpdateThreadItemPoint($threadItemId: ID!, $increment: Boolean!) {
@@ -72,7 +72,7 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
         style={{ display: `${allowUpdatePoints ? "block" : "none"}` }}>
         <FontAwesomeIcon
           icon={faChevronUp}
-          className="point-icon"
+          className="points-icon"
           onClick={threadId ? onClickIncThreadPoint : onClickIncThreadItemPoint}
         />
       </div>

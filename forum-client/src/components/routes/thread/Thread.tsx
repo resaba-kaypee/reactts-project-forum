@@ -1,23 +1,23 @@
-import React, { useEffect, useState, useReducer } from "react";
-import { useHistory, useParams } from "react-router-dom";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
-import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
-import { getTextFromNodes } from "../../editor/RichEditor";
+import React, { useEffect, useReducer, useState } from "react";
 import { useSelector } from "react-redux";
-import { AppState } from "../../../store/AppState";
+import { useHistory, useParams } from "react-router-dom";
 import { Node } from "slate";
-import "./Thread.css";
-import Nav from "../../areas/Nav";
+import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
+import Category from "../../../models/Category";
 import ThreadModel from "../../../models/Thread";
-import ThreadHeader from "./ThreadHeader";
-import ThreadCategory from "./ThreadCategory";
-import ThreadTitle from "./ThreadTitle";
-import ThreadBody from "./ThreadBody";
-import ThreadResponseBuilder from "./ThreadResponseBuilder";
+import { AppState } from "../../../store/AppState";
+import Nav from "../../areas/Nav";
+import { getTextFromNodes } from "../../editor/RichEditor";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
 import ThreadPointsInline from "../../points/ThreadPointsInline";
-import Category from "../../../models/Category";
-import ThreadResponse from "./ThreadResponse";
+import "./Thread.css";
+import ThreadBody from "./ThreadBody";
+import ThreadCategory from "./ThreadCategory";
+import ThreadHeader from "./ThreadHeader";
+import ThreadPostResponse from "./ThreadPostResponse";
+import ThreadResponseBuilder from "./ThreadResponseBuilder";
+import ThreadTitle from "./ThreadTitle";
 
 const GetThreadById = gql`
   query GetThreadById($id: ID!) {
@@ -232,15 +232,19 @@ const Thread = () => {
             lastModifiedOn={thread ? thread.lastModifiedOn : new Date()}
             title={thread ? thread.title : title}
           />
-          <ThreadCategory
-            category={thread ? thread.category : category}
-            sendOutSelectedCategory={receiveSelectedCategory}
-          />
-          <ThreadTitle
-            title={thread ? thread.title : ""}
-            readOnly={thread ? readOnly : false}
-            sendOutTitle={receiveTitle}
-          />
+          {!id ? (
+            <>
+              <ThreadCategory
+                category={thread ? thread.category : category}
+                sendOutSelectedCategory={receiveSelectedCategory}
+              />
+              <ThreadTitle
+                title={thread ? thread.title : ""}
+                readOnly={thread ? readOnly : false}
+                sendOutTitle={receiveTitle}
+              />
+            </>
+          ) : null}
           <ThreadBody
             body={thread ? thread.body : ""}
             readOnly={thread ? readOnly : false}
@@ -248,7 +252,7 @@ const Thread = () => {
           />
           {thread ? null : (
             <>
-              <div style={{ marginTop: ".5em" }}>
+              <div style={{ marginTop: ".5em", marginBottom: ".5em" }}>
                 <button className="action-btn" onClick={onClickPost}>
                   Post
                 </button>
@@ -272,17 +276,9 @@ const Thread = () => {
       {thread ? (
         <div className="thread-content-response-container">
           <hr className="thread-section-divider" />
-          <div style={{ marginBottom: ".5em" }}>
-            <strong>Post Response</strong>
-          </div>
-          <ThreadResponse
-            body={""}
-            userName={user?.userName}
-            lastModifiedOn={new Date()}
-            points={0}
-            readOnly={false}
-            threadId={thread.id}
-            threadItemId={"0"}
+          <ThreadResponseBuilder
+            threadItems={thread?.threadItems}
+            readOnly={readOnly}
             refreshThread={refreshThread}
           />
         </div>
@@ -290,9 +286,17 @@ const Thread = () => {
       {thread ? (
         <div className="thread-content-response-container">
           <hr className="thread-section-divider" />
-          <ThreadResponseBuilder
-            threadItems={thread?.threadItems}
-            readOnly={readOnly}
+          <div style={{ marginBottom: ".5em" }}>
+            <strong>Reply to this topic</strong>
+          </div>
+          <ThreadPostResponse
+            body={""}
+            userName={user?.userName}
+            lastModifiedOn={new Date()}
+            points={0}
+            readOnly={false}
+            threadId={thread.id}
+            threadItemId={"0"}
             refreshThread={refreshThread}
           />
         </div>

@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Node } from "slate";
+import React, { FC, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Node } from "slate";
 import { AppState } from "../../../store/AppState";
 import RichEditor from "../../editor/RichEditor";
 import ThreadPointsInline from "../../points/ThreadPointsInline";
@@ -80,17 +80,29 @@ const ThreadResponse: FC<ThreadResponseProps> = ({
   return (
     <div>
       <div>
-        <UserNameAndTime userName={userName} lastModifiedOn={lastModifiedOn} />
-        {threadItemId}
-        {readOnly ? (
-          <span style={{ display: "inline-block", marginLeft: "1em" }}>
-            <ThreadPointsInline
-              points={points || 0}
-              threadItemId={threadItemId}
-              allowUpdatePoints={true}
-              refreshThread={refreshThread}
-            />
-          </span>
+        <div>
+          <UserNameAndTime
+            userName={userName}
+            lastModifiedOn={lastModifiedOn}
+          />
+          {threadItemId === "0" ? null : <span>#{threadItemId}</span>}
+          {readOnly ? (
+            <span style={{ display: "inline-block", marginLeft: "1em" }}>
+              <ThreadPointsInline
+                points={points || 0}
+                threadItemId={threadItemId}
+                allowUpdatePoints={true}
+                refreshThread={refreshThread}
+              />
+            </span>
+          ) : null}
+        </div>
+        {!readOnly && threadId ? (
+          <div style={{ marginTop: ".5em" }}>
+            <button className="action-btn" onClick={onClickPost}>
+              Post Response
+            </button>
+          </div>
         ) : null}
       </div>
       <div className="thread-body-editor">
@@ -100,16 +112,8 @@ const ThreadResponse: FC<ThreadResponseProps> = ({
           sendOutBody={receiveBody}
         />
       </div>
-      {!readOnly && threadId ? (
-        <>
-          <div style={{ marginTop: ".5em" }}>
-            <button className="action-btn" onClick={onClickPost}>
-              Post Response
-            </button>
-          </div>
-          <strong>{postMsg}</strong>
-        </>
-      ) : null}
+      {/* NOTES:  Error Message*/}
+      <strong>{postMsg}</strong>
     </div>
   );
 };

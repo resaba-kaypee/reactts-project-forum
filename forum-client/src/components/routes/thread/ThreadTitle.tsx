@@ -24,7 +24,6 @@ const ThreadTitle: FC<ThreadTitleProps> = ({
 
   return (
     <div className="thread-title-container">
-      <strong>Title</strong>
       <div className="field">
         <input
           type="text"

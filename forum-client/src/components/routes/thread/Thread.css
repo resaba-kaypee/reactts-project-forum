@@ -1,5 +1,6 @@
 .thread-nav-container {
   margin-top: 0;
+  border-bottom: var(--border);
 }
 
 .thread-content-container {
@@ -32,6 +33,13 @@
   grid-row: 2;
   margin-left: 1em;
   margin-right: 1em;
+}
+
+.thread-content-post-response-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .thread-header-container {

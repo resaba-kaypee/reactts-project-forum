@@ -11,7 +11,6 @@ interface ThreadBodyProps {
 const ThreadBody: FC<ThreadBodyProps> = ({ body, readOnly, sendOutBody }) => {
   return (
     <div className="thread-body-container">
-      <strong>Body</strong>
       <div className="thread-body-editor">
         <RichEditor
           existingBody={body}

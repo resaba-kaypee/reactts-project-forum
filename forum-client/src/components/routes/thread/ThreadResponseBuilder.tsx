@@ -12,8 +12,9 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
   readOnly,
   refreshThread,
 }) => {
-  const [responseElements, setResponseElements] =
-    useState<JSX.Element | undefined>();
+  const [responseElements, setResponseElements] = useState<
+    JSX.Element | undefined
+  >();
 
   useEffect(() => {
     if (threadItems) {
@@ -39,6 +40,7 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
   return (
     <div className="thread-body-container">
       <strong style={{ marginBottom: ".75em" }}>Responses</strong>
+      {threadItems?.length === 0 ? <p>No reply to this topic yet.</p> : null}
       {responseElements}
     </div>
   );
