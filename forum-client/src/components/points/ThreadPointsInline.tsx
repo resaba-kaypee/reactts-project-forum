@@ -86,7 +86,6 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
           onClick={threadId ? onClickDecThreadPoint : onClickDecThreadItemPoint}
         />
       </div>
-
       <div className="threadpointsinline-item-btn">
         <FontAwesomeIcon className="points-icon" icon={faHeart} />
       </div>

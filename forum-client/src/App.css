@@ -9,9 +9,6 @@
   --point-color: rgb(54, 69, 79);
   --section-divider-color: rgba(115, 136, 181, 0.35);
 
-  --panel-border-thickness: 0.05em;
-  --panel-color: white;
-
   --sm-font-size: 0.95em;
   --sm-med-font-size: 1.1em;
   --md-font-size: 1.25em;
@@ -127,17 +124,6 @@ input[type="submit"]:hover {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
-
-.panel {
-  display: flex;
-  flex-direction: row;
-  border: solid var(--panel-border-thickness) var(--border-color);
-  border-radius: 0.07em;
-  background-color: var(--panel-color);
-  white-space: wrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .icon-lg {
