@@ -36,7 +36,8 @@
   word-wrap: break-word;
   overflow: auto;
   background-color: #caf778;
-  border-radius: 0em 0em 0.2em 0em;
+  border-bottom-right-radius: 0.2em;
+  border-bottom-left-radius: 0.2em;
   padding: 0.3em;
 }
 
@@ -56,20 +57,10 @@
   margin-bottom: 0.35em;
 }
 
-.threadpointsinline-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  color: var(--point-color);
-  font-size: var(--sm-med-font-size);
-  text-align: center;
-}
-
 .threadpointsinline-item-btn {
   cursor: pointer;
-  margin-left: 0.5em;
   margin-right: 0.5em;
+  padding: 0.2em;
 }
 
 .main-header {

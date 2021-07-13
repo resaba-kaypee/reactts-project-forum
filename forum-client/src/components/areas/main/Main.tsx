@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { gql, useLazyQuery } from "@apollo/client";
 import { useParams, useHistory } from "react-router-dom";
+import { AppState } from "../../../store/AppState";
+import { useSelector } from "react-redux";
 import MainHeader from "./MainHeader";
 import ThreadCard from "./ThreadCard";
 import Category from "../../../models/Category";
@@ -83,6 +85,10 @@ const Main = () => {
     },
   ] = useLazyQuery(GetThreadsLatest);
 
+  const user = useSelector((state: AppState) => state.user);
+  const [msg, setMsg] = useState("Write a new topic");
+  const [style, setStyle] = useState("action-btn");
+
   const { categoryId } = useParams<any>();
 
   const [category, setCategory] = useState<Category | undefined>();
@@ -143,13 +149,23 @@ const Main = () => {
   }, [threadsLatestData]);
 
   const onClickPostThread = () => {
-    history.push("/thread");
+    if (user && user.id !== "0") {
+      history.push("/thread");
+    }
+
+    setStyle("warning");
+    setMsg("You must be logged in to write a topic!");
+
+    setTimeout(() => {
+      setMsg("Write a new topic");
+      setStyle("action-btn");
+    }, 2000);
   };
 
   return (
     <main className="content">
-      <button className="action-btn" onClick={onClickPostThread}>
-        Write a new topic
+      <button className={style} onClick={onClickPostThread}>
+        {msg}
       </button>
       <MainHeader category={category} />
       <div>{threadCards}</div>
