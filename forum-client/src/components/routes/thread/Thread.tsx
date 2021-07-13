@@ -219,14 +219,6 @@ const Thread = () => {
       </div>
       <div className="thread-content-container">
         <div className="thread-content-post-container">
-          {width <= 768 && thread ? (
-            <ThreadPointsInline
-              points={thread?.points || 0}
-              threadId={thread?.id}
-              refreshThread={refreshThread}
-              allowUpdatePoints={true}
-            />
-          ) : null}
           <ThreadHeader
             userName={thread ? thread.user.userName : user?.userName}
             lastModifiedOn={thread ? thread.lastModifiedOn : new Date()}
@@ -250,6 +242,16 @@ const Thread = () => {
             readOnly={thread ? readOnly : false}
             sendOutBody={receiveBody}
           />
+          {/* Only on mobile */}
+          {width <= 768 && thread ? (
+            <ThreadPointsInline
+              points={thread?.points || 0}
+              threadId={thread?.id}
+              refreshThread={refreshThread}
+              allowUpdatePoints={true}
+            />
+          ) : null}
+          {/* Writing new topic */}
           {thread ? null : (
             <>
               <div style={{ marginTop: ".5em", marginBottom: ".5em" }}>
@@ -261,6 +263,7 @@ const Thread = () => {
             </>
           )}
         </div>
+        {/* Desktop view */}
         <div className="thread-content-points-container">
           <ThreadPointsBar
             points={thread?.points || 0}

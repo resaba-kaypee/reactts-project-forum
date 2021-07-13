@@ -66,30 +66,30 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
     refreshThread && refreshThread();
   };
   return (
-    <span className="threadpointsinline-item">
-      <div
+    <div className="threadcard-footer">
+      <span
         className="threadpointsinline-item-btn"
         style={{ display: `${allowUpdatePoints ? "block" : "none"}` }}>
         <FontAwesomeIcon
           icon={faChevronUp}
-          className="points-icon"
+          className="icon-lg"
           onClick={threadId ? onClickIncThreadPoint : onClickIncThreadItemPoint}
         />
-      </div>
-      {points}
-      <div
+      </span>
+      <span className="threadpointsinline-item-btn">{points}</span>
+      <span
         className="threadpointsinline-item-btn"
         style={{ display: `${allowUpdatePoints ? "block" : "none"}` }}>
         <FontAwesomeIcon
           icon={faChevronDown}
-          className="points-icon"
+          className="icon-lg"
           onClick={threadId ? onClickDecThreadPoint : onClickDecThreadItemPoint}
         />
-      </div>
-      <div className="threadpointsinline-item-btn">
-        <FontAwesomeIcon className="points-icon" icon={faHeart} />
-      </div>
-    </span>
+      </span>
+      <span className="threadpointsinline-item-btn">
+        <FontAwesomeIcon className="icon-lg" icon={faHeart} />
+      </span>
+    </div>
   );
 };
 
