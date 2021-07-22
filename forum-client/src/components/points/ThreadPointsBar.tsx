@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
 import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,9 +8,25 @@ import {
   faChevronDown,
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
+import { gql, useLazyQuery } from "@apollo/client";
+
+const GetThreadById = gql`
+  query GetThreadById($threadId: ID!) {
+    getThreadById(id: $threadId) {
+      ... on EntityResult {
+        messages
+      }
+
+      ... on Thread {
+        id
+        points
+      }
+    }
+  }
+`;
 
 export class ThreadPointsBarProps {
-  points: number = 0;
+  pointsFromThread: number = 0;
   responseCount?: number;
   threadId?: string;
   allowUpdatedPoints?: boolean = false;
@@ -18,16 +34,59 @@ export class ThreadPointsBarProps {
 }
 
 const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
-  points,
+  pointsFromThread,
   responseCount,
   threadId,
   allowUpdatedPoints,
-  refreshThread,
 }) => {
   const { width } = useWindowDimensions();
+  const [updating, setUpdating] = useState<boolean>(false);
+  const [points, setPoints] = useState<number>(pointsFromThread);
+  console.log(points);
+
+  const [
+    execGetThreadById,
+    {
+      // error: getThreadByIdErr,
+      // called: getThreadByIdCalled,
+      data: threadData,
+    },
+  ] = useLazyQuery(GetThreadById, { fetchPolicy: "no-cache" });
+
+  const refreshThread = () => {
+    execGetThreadById({
+      variables: {
+        threadId,
+      },
+    });
+  };
+
+  const updatePoints = () => {
+    setUpdating(true);
+  };
+
+  useEffect(() => {
+    if (updating) {
+      execGetThreadById({
+        variables: {
+          threadId,
+        },
+      });
+    }
+
+    setUpdating(false);
+    // eslint-disable-next-line
+  }, [updating, execGetThreadById]);
+
+  useEffect(() => {
+    if (threadData && threadData.getThreadById) {
+      setPoints(threadData.getThreadById.points);
+    }
+  }, [threadData]);
 
   const { onClickIncThreadPoint, onClickDecThreadPoint } = useUpdateThreadPoint(
     refreshThread,
+    updatePoints,
     threadId
   );
 

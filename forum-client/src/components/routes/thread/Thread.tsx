@@ -1,23 +1,17 @@
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import React, { useEffect, useReducer, useState } from "react";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { Node } from "slate";
-import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
+import { AppState } from "../../../store/AppState";
+import { getTextFromNodes } from "../../editor/RichEditor";
+import "./Thread.css";
+import Nav from "../../areas/Nav";
 import Category from "../../../models/Category";
 import ThreadModel from "../../../models/Thread";
-import { AppState } from "../../../store/AppState";
-import Nav from "../../areas/Nav";
-import { getTextFromNodes } from "../../editor/RichEditor";
-import ThreadPointsBar from "../../points/ThreadPointsBar";
-import ThreadPointsInline from "../../points/ThreadPointsInline";
-import "./Thread.css";
-import ThreadBody from "./ThreadBody";
-import ThreadCategory from "./ThreadCategory";
-import ThreadHeader from "./ThreadHeader";
+import ThreadContent from "./ThreadContent";
 import ThreadPostResponse from "./ThreadPostResponse";
 import ThreadResponseBuilder from "./ThreadResponseBuilder";
-import ThreadTitle from "./ThreadTitle";
 
 const GetThreadById = gql`
   query GetThreadById($id: ID!) {
@@ -80,7 +74,7 @@ const threadReducer = (state: any, action: any) => {
 };
 
 const Thread = () => {
-  const { width } = useWindowDimensions();
+  const [execCreateThread] = useMutation(CreateThread);
   const [
     execGetThreadById,
     {
@@ -89,7 +83,6 @@ const Thread = () => {
       data: threadData,
     },
   ] = useLazyQuery(GetThreadById, { fetchPolicy: "no-cache" });
-  const [execCreateThread] = useMutation(CreateThread);
 
   const [thread, setThread] = useState<ThreadModel | undefined>();
   const [readOnly, setReadOnly] = useState(false);
@@ -107,14 +100,14 @@ const Thread = () => {
   const history = useHistory();
 
   const refreshThread = () => {
-    console.log("refreshed");
-    if (id && id > 0) {
-      execGetThreadById({
-        variables: {
-          id,
-        },
-      });
-    }
+    //   console.log("refreshed");
+    //   // if (id && id > 0) {
+    //   //   execGetThreadById({
+    //   //     variables: {
+    //   //       id,
+    //   //     },
+    //   //   });
+    //   // }
   };
 
   useEffect(() => {
@@ -217,65 +210,17 @@ const Thread = () => {
       <div className="thread-nav-container">
         <Nav />
       </div>
-      <div className="thread-content-container">
-        <div className="thread-content-post-container">
-          <ThreadHeader
-            userName={thread ? thread.user.userName : user?.userName}
-            lastModifiedOn={thread ? thread.lastModifiedOn : new Date()}
-            title={thread ? thread.title : title}
-          />
-          {!id ? (
-            <>
-              <ThreadCategory
-                category={thread ? thread.category : category}
-                sendOutSelectedCategory={receiveSelectedCategory}
-              />
-              <ThreadTitle
-                title={thread ? thread.title : ""}
-                readOnly={thread ? readOnly : false}
-                sendOutTitle={receiveTitle}
-              />
-            </>
-          ) : null}
-          <ThreadBody
-            body={thread ? thread.body : ""}
-            readOnly={thread ? readOnly : false}
-            sendOutBody={receiveBody}
-          />
-          {/* Only on mobile */}
-          {width <= 768 && thread ? (
-            <ThreadPointsInline
-              points={thread?.points || 0}
-              threadId={thread?.id}
-              refreshThread={refreshThread}
-              allowUpdatePoints={true}
-            />
-          ) : null}
-          {/* Writing new topic */}
-          {thread ? null : (
-            <>
-              <div style={{ marginTop: ".5em", marginBottom: ".5em" }}>
-                <button className="action-btn" onClick={onClickPost}>
-                  Post
-                </button>
-              </div>
-              <strong>{postMsg}</strong>
-            </>
-          )}
-        </div>
-        {/* Desktop view */}
-        <div className="thread-content-points-container">
-          <ThreadPointsBar
-            points={thread?.points || 0}
-            responseCount={
-              thread && thread.threadItems && thread.threadItems.length
-            }
-            threadId={thread?.id || "0"}
-            allowUpdatedPoints={true}
-            refreshThread={refreshThread}
-          />
-        </div>
-      </div>
+      <ThreadContent
+        id={id}
+        onClickPost={onClickPost}
+        postMsg={postMsg}
+        readOnly={readOnly}
+        receiveSelectedCategory={receiveSelectedCategory}
+        receiveTitle={receiveTitle}
+        receiveBody={receiveBody}
+        refreshThread={refreshThread}
+        thread={thread}
+      />
       {thread ? (
         <div className="thread-content-response-container">
           <hr className="thread-section-divider" />

@@ -8,6 +8,7 @@ const UpdateThreadPoint = gql`
 
 const useUpdateThreadPoint = (
   refreshThread?: () => void,
+  updatePoints?: () => void,
   threadId?: string
 ) => {
   const [execUpdateThreadPoint] = useMutation(UpdateThreadPoint);
@@ -24,6 +25,7 @@ const useUpdateThreadPoint = (
       },
     });
 
+    updatePoints && updatePoints();
     refreshThread && refreshThread();
   };
 
@@ -38,6 +40,8 @@ const useUpdateThreadPoint = (
         increment: false,
       },
     });
+
+    updatePoints && updatePoints();
     refreshThread && refreshThread();
   };
 
