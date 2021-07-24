@@ -8,10 +8,11 @@ const UpdateThreadPoint = gql`
 
 const useUpdateThreadPoint = (
   refreshThread?: () => void,
-  updatePoints?: () => void,
+  updatingPoints?: () => void,
   threadId?: string
 ) => {
-  const [execUpdateThreadPoint] = useMutation(UpdateThreadPoint);
+  const [execUpdateThreadPoint, { data: updatePointsMessage }] =
+    useMutation(UpdateThreadPoint);
 
   const onClickIncThreadPoint = async (
     e: React.MouseEvent<SVGSVGElement, MouseEvent>
@@ -24,8 +25,7 @@ const useUpdateThreadPoint = (
         increment: true,
       },
     });
-
-    updatePoints && updatePoints();
+    updatingPoints && updatingPoints();
     refreshThread && refreshThread();
   };
 
@@ -40,14 +40,14 @@ const useUpdateThreadPoint = (
         increment: false,
       },
     });
-
-    updatePoints && updatePoints();
+    updatingPoints && updatingPoints();
     refreshThread && refreshThread();
   };
 
   return {
     onClickDecThreadPoint,
     onClickIncThreadPoint,
+    updatePointsMessage,
   };
 };
 

@@ -1,14 +1,15 @@
 import React, { FC, useEffect, useState } from "react";
-import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
-import { useWindowDimensions } from "../../hooks/useWindowDimensions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { gql, useLazyQuery } from "@apollo/client";
+import { useDispatch } from "react-redux";
+import { UpdateThreadPointType } from "../../store/message/Reducer";
+import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
 import {
   faHeart,
   faReplyAll,
   faChevronDown,
   faChevronUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { gql, useLazyQuery } from "@apollo/client";
 
 const GetThreadById = gql`
   query GetThreadById($threadId: ID!) {
@@ -26,7 +27,7 @@ const GetThreadById = gql`
 `;
 
 export class ThreadPointsBarProps {
-  pointsFromThread: number = 0;
+  pointsFromThread?: number;
   responseCount?: number;
   threadId?: string;
   allowUpdatedPoints?: boolean = false;
@@ -39,10 +40,8 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
   threadId,
   allowUpdatedPoints,
 }) => {
-  const { width } = useWindowDimensions();
-  const [updating, setUpdating] = useState<boolean>(false);
-  const [points, setPoints] = useState<number>(pointsFromThread);
-  console.log(points);
+  const [updating, setUpdating] = useState<boolean>(true);
+  const [points, setPoints] = useState(pointsFromThread);
 
   const [
     execGetThreadById,
@@ -53,6 +52,8 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
     },
   ] = useLazyQuery(GetThreadById, { fetchPolicy: "no-cache" });
 
+  const reduxDispatcher = useDispatch();
+
   const refreshThread = () => {
     execGetThreadById({
       variables: {
@@ -61,12 +62,25 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
     });
   };
 
-  const updatePoints = () => {
+  const updatingPoints = () => {
     setUpdating(true);
   };
 
+  const { onClickIncThreadPoint, onClickDecThreadPoint, updatePointsMessage } =
+    useUpdateThreadPoint(refreshThread, updatingPoints, threadId);
+
   useEffect(() => {
-    if (updating) {
+    if (updatePointsMessage && updatePointsMessage.updateThreadPoint !== "") {
+      reduxDispatcher({
+        type: UpdateThreadPointType,
+        payload: updatePointsMessage.updateThreadPoint,
+      });
+    }
+    // eslint-disable-next-line
+  }, [updatePointsMessage]);
+
+  useEffect(() => {
+    if (threadId && updating) {
       execGetThreadById({
         variables: {
           threadId,
@@ -75,8 +89,7 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
     }
 
     setUpdating(false);
-    // eslint-disable-next-line
-  }, [updating, execGetThreadById]);
+  }, [threadId, execGetThreadById, updating]);
 
   useEffect(() => {
     if (threadData && threadData.getThreadById) {
@@ -84,47 +97,42 @@ const ThreadPointsBar: FC<ThreadPointsBarProps> = ({
     }
   }, [threadData]);
 
-  const { onClickIncThreadPoint, onClickDecThreadPoint } = useUpdateThreadPoint(
-    refreshThread,
-    updatePoints,
-    threadId
-  );
-
-  if (width > 768) {
-    return (
-      <div className="threadcard-points">
-        <div className="threadcard-points-item">
-          <div
-            className="threadcard-points-item-btn"
-            style={{ display: `${allowUpdatedPoints ? "block" : "none"}` }}>
-            <FontAwesomeIcon
-              icon={faChevronUp}
-              className="points-icon"
-              onClick={onClickIncThreadPoint}
-            />
-          </div>
-          {points}
-          <div
-            className="threadcard-points-item-btn"
-            style={{ display: `${allowUpdatedPoints ? "block" : "none"}` }}>
-            <FontAwesomeIcon
-              icon={faChevronDown}
-              className="points-icon"
-              onClick={onClickDecThreadPoint}
-            />
-          </div>
-          <br />
+  return (
+    <div className="threadcard-points">
+      <div className="threadcard-points-item">
+        <div
+          className="threadcard-points-item-btn"
+          style={{ display: `${allowUpdatedPoints ? "block" : "none"}` }}>
+          <FontAwesomeIcon
+            icon={faChevronUp}
+            className="points-icon"
+            onClick={onClickIncThreadPoint}
+          />
+        </div>
+        {points}
+        <div
+          className="threadcard-points-item-btn"
+          style={{ display: `${allowUpdatedPoints ? "block" : "none"}` }}>
+          <FontAwesomeIcon
+            icon={faChevronDown}
+            className="points-icon"
+            onClick={onClickDecThreadPoint}
+          />
+        </div>
+        <br />
+        <div className="threadcard-points-item-heart">
           <FontAwesomeIcon className="points-icon" icon={faHeart} />
         </div>
-        <div className="threadcard-points-item">
-          {responseCount}
-          <br />
+      </div>
+      <div className="threadcard-points-item">
+        {responseCount}
+        <br />
+        <div className="threadcard-points-item-heart">
           <FontAwesomeIcon className="points-icon" icon={faReplyAll} />
         </div>
       </div>
-    );
-  }
-  return null;
+    </div>
+  );
 };
 
 export default ThreadPointsBar;

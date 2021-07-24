@@ -1,14 +1,14 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Node } from "slate";
+import { AppState } from "../../../store/AppState";
+import { useSelector } from "react-redux";
 import Thread from "../../../models/Thread";
 import ThreadPointsBar from "../../points/ThreadPointsBar";
-import ThreadPointsInline from "../../points/ThreadPointsInline";
 import ThreadBody from "./ThreadBody";
 import ThreadCategory from "./ThreadCategory";
 import ThreadHeader from "./ThreadHeader";
 import ThreadTitle from "./ThreadTitle";
 import Category from "../../../models/Category";
-import { useWindowDimensions } from "../../../hooks/useWindowDimensions";
 
 interface ThreadContentProps {
   id: string;
@@ -20,7 +20,6 @@ interface ThreadContentProps {
   receiveSelectedCategory: (cat: Category) => void;
   receiveTitle: (updatedTitle: string) => void;
   receiveBody: (body: Node[]) => void;
-  refreshThread?: () => void;
   thread?: Thread;
 }
 
@@ -32,10 +31,31 @@ const ThreadContent: FC<ThreadContentProps> = ({
   receiveSelectedCategory,
   receiveTitle,
   receiveBody,
-  refreshThread,
   thread,
 }) => {
-  const { width } = useWindowDimensions();
+  const message = useSelector((state: AppState) => state.message);
+  const user = useSelector((state: AppState) => state.user);
+  const [msg, setMsg] = useState<string>("");
+
+  useEffect(() => {
+    if (message) {
+      setMsg(message);
+    }
+  }, [message]);
+
+  useEffect(() => {
+    if (user && user.id !== "0") {
+      setMsg("");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (msg) {
+      const timeOut = setTimeout(() => setMsg(""), 3000);
+
+      return () => clearTimeout(timeOut);
+    }
+  }, [msg]);
 
   return (
     <div className="thread-content-container">
@@ -63,15 +83,6 @@ const ThreadContent: FC<ThreadContentProps> = ({
           readOnly={thread ? readOnly : false}
           sendOutBody={receiveBody}
         />
-        {/* Only on mobile */}
-        {width <= 768 && thread ? (
-          <ThreadPointsInline
-            points={thread?.points || 0}
-            threadId={thread?.id}
-            refreshThread={refreshThread}
-            allowUpdatePoints={true}
-          />
-        ) : null}
         {/* Writing new topic */}
         {thread ? null : (
           <>
@@ -84,16 +95,22 @@ const ThreadContent: FC<ThreadContentProps> = ({
           </>
         )}
       </div>
-      {/* Desktop view */}
+      {msg ? (
+        <div className="warning-container">
+          <span className="warning">{msg}</span>
+        </div>
+      ) : null}
       <div className="thread-content-points-container">
-        <ThreadPointsBar
-          pointsFromThread={thread?.points || 0}
-          threadId={thread?.id}
-          responseCount={
-            thread && thread.threadItems && thread.threadItems.length
-          }
-          allowUpdatedPoints={true}
-        />
+        {thread ? (
+          <ThreadPointsBar
+            pointsFromThread={thread.points}
+            threadId={thread?.id}
+            responseCount={
+              thread && thread.threadItems && thread.threadItems.length
+            }
+            allowUpdatedPoints={true}
+          />
+        ) : null}
       </div>
     </div>
   );
