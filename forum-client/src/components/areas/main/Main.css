@@ -69,3 +69,26 @@
   margin-bottom: 0.75em;
   border: solid 1px var(--border-color);
 }
+
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  .threadcard-points {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.2em;
+  }
+
+  .threadcard-points-item {
+    display: flex;
+    flex-direction: row;
+    padding: 0.2em;
+  }
+
+  .threadcard-points-item-btn {
+    margin: auto 0.35em auto 0.35em;
+  }
+
+  .threadcard-points-item-heart {
+    margin: auto 0.35em auto 0.35em;
+  }
+}

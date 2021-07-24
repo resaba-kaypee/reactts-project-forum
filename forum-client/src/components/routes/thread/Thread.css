@@ -17,6 +17,7 @@
   margin-right: 1em;
   padding-bottom: 1em;
 }
+
 .thread-content-points-container > div {
   height: 100%;
 }
@@ -75,11 +76,13 @@
 }
 
 @media screen and (orientation: portrait) and (max-width: 768px) {
-  .thread-content-container {
-    grid-template-columns: 1fr;
-  }
-
   .thread-content-points-container {
-    display: none;
+    border: unset;
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+  .thread-content-container {
+    display: flex;
+    flex-direction: column;
   }
 }
