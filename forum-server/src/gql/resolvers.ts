@@ -14,6 +14,7 @@ import { GqlContext } from "./GqlContext";
 import {
   createThreadItem,
   getThreadItemsByThreadId,
+  getThreadItemById,
 } from "../repo/ThreadItemRepos";
 import { ThreadItem } from "../repo/ThreadItem";
 import { getAllCategories } from "../repo/ThreadCategoryRepos";
@@ -84,7 +85,7 @@ const resolvers: IResolvers = {
   // :> Query
   Query: {
     getThreadById: async (
-      obj: AudioNode,
+      obj: any,
       args: { id: string },
       ctx: GqlContext,
       info: any
@@ -150,7 +151,7 @@ const resolvers: IResolvers = {
     },
 
     getThreadItemsByThreadId: async (
-      obj: AnimationTimeline,
+      obj: any,
       args: { threadId: string },
       ctx: GqlContext,
       infor: any
@@ -170,6 +171,29 @@ const resolvers: IResolvers = {
             : [STANDARD_ERROR],
         };
       } catch (ex) {
+        throw ex;
+      }
+    },
+
+    getThreadItemById: async (
+      obj: any,
+      args: { threadItemId: string },
+      ctx: GqlContext,
+      info: any
+    ): Promise<ThreadItem | EntityResult> => {
+      let threadItem: QueryOneResult<ThreadItem>;
+      try {
+        threadItem = await getThreadItemById(args.threadItemId);
+
+        if (threadItem.entity) return threadItem.entity;
+        return {
+          messages: threadItem.messages
+            ? threadItem.messages
+            : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex.message);
+        // TODOS log the issue so it can look up later
         throw ex;
       }
     },
