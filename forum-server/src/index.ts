@@ -65,10 +65,14 @@ const main = async () => {
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const apolloServer = new ApolloServer({
     schema,
+    introspection: true,
     playground: {
       // for offline use online
       cdnUrl: `http://localhost:5678`,
       version: "1.0.0",
+      settings: {
+        ["request.credentials"]: "same-origin",
+      },
     },
     context: ({ req, res }: any) => ({ req, res }),
   });
