@@ -89,7 +89,7 @@ const ThreadResponse: FC<ThreadResponseProps> = ({
           {readOnly ? (
             <span style={{ display: "inline-block", marginLeft: "1em" }}>
               <ThreadPointsInline
-                points={points || 0}
+                pointsFromThread={points}
                 threadItemId={threadItemId}
                 allowUpdatePoints={true}
                 refreshThread={refreshThread}

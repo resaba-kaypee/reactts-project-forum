@@ -1,12 +1,11 @@
-import { gql, useMutation } from "@apollo/client";
+import React, { FC, useEffect, useState } from "react";
+import { gql, useMutation, useLazyQuery } from "@apollo/client";
 import {
   faChevronDown,
   faChevronUp,
   faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { FC } from "react";
-import useUpdateThreadPoint from "../../hooks/useUpdateThreadPoint";
 
 const UpdateThreadItemPoint = gql`
   mutation UpdateThreadItemPoint($threadItemId: ID!, $increment: Boolean!) {
@@ -14,27 +13,28 @@ const UpdateThreadItemPoint = gql`
   }
 `;
 
-class ThreadPointsInlineProps {
-  points: number = 0;
-  threadId?: string;
-  threadItemId?: string;
-  allowUpdatePoints?: boolean = false;
-  refreshThread?: () => void;
-}
+const GetThreadItemById = gql`
+  query GetThreadItemById($threadItemId: ID!) {
+    getThreadItemById(threadItemId: $threadItemId) {
+      ... on EntityResult {
+        messages
+      }
 
-const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
-  points,
-  threadId,
-  threadItemId,
-  allowUpdatePoints,
-  refreshThread,
-}) => {
+      ... on ThreadItem {
+        id
+        points
+        body
+      }
+    }
+  }
+`;
+
+const UpdateThreadItemPoints = (
+  updatingPoints: () => void,
+  refreshThread: () => void,
+  threadItemId?: string
+) => {
   const [execUpdateThreadItemPoint] = useMutation(UpdateThreadItemPoint);
-
-  const { onClickDecThreadPoint, onClickIncThreadPoint } = useUpdateThreadPoint(
-    refreshThread,
-    threadId
-  );
 
   const onClickIncThreadItemPoint = async (
     e: React.MouseEvent<SVGSVGElement, MouseEvent>
@@ -49,6 +49,7 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
     });
 
     refreshThread && refreshThread();
+    updatingPoints && updatingPoints();
   };
 
   const onClickDecThreadItemPoint = async (
@@ -64,7 +65,67 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
     });
 
     refreshThread && refreshThread();
+    updatingPoints && updatingPoints();
   };
+
+  return {
+    onClickDecThreadItemPoint,
+    onClickIncThreadItemPoint,
+  };
+};
+
+class ThreadPointsInlineProps {
+  pointsFromThread: number = 0;
+  threadItemId?: string;
+  allowUpdatePoints?: boolean = false;
+  refreshThread?: () => void;
+}
+
+const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
+  pointsFromThread,
+  threadItemId,
+  allowUpdatePoints,
+}) => {
+  const [execGetThreadItemById, { data: threadItemData }] = useLazyQuery(
+    GetThreadItemById,
+    { fetchPolicy: "no-cache" }
+  );
+  const [updating, setUpdating] = useState<boolean>(false);
+  const [points, setPoints] = useState(pointsFromThread);
+
+  const updatingPoints = () => {
+    setUpdating(true);
+  };
+
+  const refreshThread = () => {
+    execGetThreadItemById({
+      variables: {
+        threadItemId,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (threadItemId && updating) {
+      execGetThreadItemById({
+        variables: {
+          threadItemId,
+        },
+      });
+    }
+  }, [threadItemId, updating, execGetThreadItemById]);
+
+  useEffect(() => {
+    if (threadItemData && threadItemData.getThreadItemById) {
+      console.log("called");
+      console.log(threadItemData.getThreadItemById.points);
+      setPoints(threadItemData.getThreadItemById.points);
+    }
+  }, [threadItemData]);
+
+  const { onClickDecThreadItemPoint, onClickIncThreadItemPoint } =
+    UpdateThreadItemPoints(updatingPoints, refreshThread, threadItemId);
+
   return (
     <div className="threadcard-footer">
       <span
@@ -73,7 +134,7 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
         <FontAwesomeIcon
           icon={faChevronUp}
           className="icon-lg"
-          onClick={threadId ? onClickIncThreadPoint : onClickIncThreadItemPoint}
+          onClick={onClickIncThreadItemPoint}
         />
       </span>
       <span className="threadpointsinline-item-btn">{points}</span>
@@ -83,7 +144,7 @@ const ThreadPointsInline: FC<ThreadPointsInlineProps> = ({
         <FontAwesomeIcon
           icon={faChevronDown}
           className="icon-lg"
-          onClick={threadId ? onClickDecThreadPoint : onClickDecThreadItemPoint}
+          onClick={onClickDecThreadItemPoint}
         />
       </span>
       <span className="threadpointsinline-item-btn">
