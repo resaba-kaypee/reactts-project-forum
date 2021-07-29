@@ -18,5 +18,6 @@
     "typeRoots": ["./src/index.ts"],
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "exclude": ["node_modules", "../forum-server/src"],
+  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
 }
