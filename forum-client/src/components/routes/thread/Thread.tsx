@@ -204,7 +204,6 @@ const Thread = () => {
       }
     }
   };
-
   return (
     <div className="screen-root-container">
       <div className="thread-nav-container">
@@ -218,7 +217,6 @@ const Thread = () => {
         receiveSelectedCategory={receiveSelectedCategory}
         receiveTitle={receiveTitle}
         receiveBody={receiveBody}
-        refreshThread={refreshThread}
         thread={thread}
       />
       {thread ? (
