@@ -8,6 +8,7 @@ import Nav from "../../areas/Nav";
 import Thread from "../../../models/Thread";
 import ThreadItem from "../../../models/ThreadItem";
 import PasswordComparison from "../../auth/common/PasswordComparison";
+import RichEditor from "../../editor/RichEditor";
 import "./UserProfile.css";
 
 const ChangePassword = gql`
@@ -34,7 +35,6 @@ const UserProfile = () => {
   const [execChangePassword] = useMutation(ChangePassword);
 
   useEffect(() => {
-    console.log("user", user);
     if (user) {
       dispatch({
         type: "userName",
@@ -52,21 +52,30 @@ const UserProfile = () => {
       });
 
       setThreads(
-        !user.threadItems || user.threadItems.length === 0 ? undefined : (
+        !user.threads || user.threads.length === 0 ? (
+          <ul>
+            <li>No created thread yet.</li>
+          </ul>
+        ) : (
           <ul>{threadList}</ul>
         )
       );
 
       const threadItemList = user.threadItems?.map((ti: ThreadItem) => (
         <li key={`user-th-${ti.id}`}>
-          <Link to={`/thread/${ti.thread?.id}`} className="userprofile-link">
-            {ti.body.length <= 40 ? ti.body : ti.body.substr(0, 40) + " ..."}
-          </Link>
+          <div>
+            <p>in response to thread id: {ti.thread.id}</p>
+            <Link to={`/thread/${ti.thread?.id}`} className="userprofile-link">
+              <RichEditor readOnly={true} existingBody={ti.body} />
+            </Link>
+          </div>
         </li>
       ));
 
       setThreadItems(
-        !user.threadItems || user.threadItems.length === 0 ? undefined : (
+        !user.threadItems || user.threadItems.length === 0 ? (
+          <p>No replies to a thread yet.</p>
+        ) : (
           <ul>{threadItemList}</ul>
         )
       );
