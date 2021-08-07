@@ -83,11 +83,12 @@ const Main = () => {
       //called: threadsLatestCalled,
       data: threadsLatestData,
     },
-  ] = useLazyQuery(GetThreadsLatest);
+  ] = useLazyQuery(GetThreadsLatest, { fetchPolicy: "no-cache" });
 
   const user = useSelector((state: AppState) => state.user);
   const [msg, setMsg] = useState("Write a new topic");
   const [style, setStyle] = useState("action-btn");
+  const [onReset, setOnReset] = useState(false);
 
   const { categoryId } = useParams<any>();
 
@@ -99,8 +100,6 @@ const Main = () => {
   const history = useHistory();
 
   useEffect(() => {
-    console.log("main categoryId", categoryId);
-
     if (categoryId && categoryId > 0) {
       execGetThreadsByCat({
         variables: {
@@ -148,6 +147,19 @@ const Main = () => {
     }
   }, [threadsLatestData]);
 
+  useEffect(() => {
+    let timeOut: any;
+
+    if (onReset) {
+      setTimeout(() => {
+        setMsg("Write a new topic");
+        setStyle("action-btn");
+        setOnReset(false);
+      }, 2000);
+    }
+    return () => clearTimeout(timeOut);
+  }, [onReset]);
+
   const onClickPostThread = () => {
     if (user && user.id !== "0") {
       history.push("/thread");
@@ -155,11 +167,7 @@ const Main = () => {
 
     setStyle("warning");
     setMsg("You must be logged in to write a topic!");
-
-    setTimeout(() => {
-      setMsg("Write a new topic");
-      setStyle("action-btn");
-    }, 2000);
+    setOnReset(true);
   };
 
   return (
