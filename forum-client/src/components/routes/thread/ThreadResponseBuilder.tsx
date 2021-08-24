@@ -1,30 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
-import { gql, useLazyQuery } from "@apollo/client";
+import { useSelector } from "react-redux";
+import { AppState } from "../../../store/AppState";
+import { ThreadItemArray } from "../../../store/items/Reducers";
 import ThreadItem from "../../../models/ThreadItem";
 import ThreadResponse from "./ThreadResponse";
-
-const GetThreadItemsByThreadId = gql`
-  query getThreadItemsByThreadId($threadId: ID!) {
-    getThreadItemsByThreadId(threadId: $threadId) {
-      ... on EntityResult {
-        messages
-      }
-
-      ... on ThreadItemArray {
-        threadItems {
-          id
-          body
-          points
-          lastModifiedOn
-          user {
-            id
-            userName
-          }
-        }
-      }
-    }
-  }
-`;
 
 interface ThreadResponseBuilderProps {
   threadId?: string;
@@ -35,52 +14,29 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
   threadId,
   readOnly,
 }) => {
-  const [
-    execGetThreadItemsByThreadId,
-    {
-      // called,
-      // error,
-      data: threadItemData,
-    },
-  ] = useLazyQuery(GetThreadItemsByThreadId, { fetchPolicy: "no-cache" });
-
   const [responseElements, setResponseElements] = useState<
     JSX.Element | undefined
   >();
+  const items: ThreadItemArray = useSelector((state: AppState) => state.items);
 
   useEffect(() => {
-    if (threadId) {
-      execGetThreadItemsByThreadId({
-        variables: { threadId },
-      });
-    }
-  }, [threadId, execGetThreadItemsByThreadId]);
-
-  useEffect(() => {
-    if (
-      threadItemData &&
-      threadItemData.getThreadItemsByThreadId &&
-      threadItemData.getThreadItemsByThreadId.threadItems
-    ) {
-      const thResponses =
-        threadItemData.getThreadItemsByThreadId.threadItems.map(
-          (ti: ThreadItem) => {
-            return (
-              <li key={`thr-${ti.id}`}>
-                <ThreadResponse
-                  body={ti.body}
-                  userName={ti.user.userName}
-                  lastModifiedOn={ti.createdOn}
-                  points={ti.points}
-                  readOnly={readOnly}
-                  threadItemId={ti?.id || "0"}
-                />
-              </li>
-            );
-          }
+    if (items.threadItems) {
+      const thResponses = items.threadItems.map((ti: ThreadItem) => {
+        return (
+          <li key={`thr-${ti.id}`}>
+            <ThreadResponse
+              body={ti.body}
+              userName={ti.user.userName}
+              lastModifiedOn={ti.createdOn}
+              points={ti.points}
+              readOnly={readOnly}
+              threadItemId={ti?.id || "0"}
+            />
+          </li>
         );
+      });
       setResponseElements(
-        threadItemData.getThreadItemsByThreadId.threadItems.length > 0 ? (
+        items.threadItems.length > 0 ? (
           <ul>{thResponses}</ul>
         ) : (
           <ul>
@@ -91,8 +47,7 @@ const ThreadResponseBuilder: FC<ThreadResponseBuilderProps> = ({
         )
       );
     }
-    // eslint-disable-next-line
-  }, [threadItemData, readOnly]);
+  }, [items, readOnly]);
 
   return (
     <div className="thread-body-container">

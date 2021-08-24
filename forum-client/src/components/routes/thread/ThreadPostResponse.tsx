@@ -1,8 +1,12 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { FC, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Node } from "slate";
 import { AppState } from "../../../store/AppState";
+import {
+  createThreadItemAction,
+  ThreadItemArray,
+} from "../../../store/items/Reducers";
 import RichEditor from "../../editor/RichEditor";
 
 const CreateThreadItem = gql`
@@ -15,26 +19,20 @@ const CreateThreadItem = gql`
 
 interface ThreadPostResponseProps {
   body?: string;
-  userName?: string;
   threadId?: string;
-  threadItemId: string;
-  points: number;
-  lastModifiedOn?: Date;
   readOnly: boolean;
   refreshThread?: () => void;
 }
 const ThreadPostResponse: FC<ThreadPostResponseProps> = ({
   body,
-  userName,
   threadId,
-  threadItemId,
-  points,
-  lastModifiedOn,
   readOnly,
   refreshThread,
 }) => {
   const user = useSelector((state: AppState) => state.user);
+  const items: ThreadItemArray = useSelector((state: AppState) => state.items);
   const [execCreateThreadItem] = useMutation(CreateThreadItem);
+  const dispatch = useDispatch();
   const [postMsg, setPostMsg] = useState("");
   const [bodyToSave, setBodyToSave] = useState("");
 
@@ -56,13 +54,27 @@ const ThreadPostResponse: FC<ThreadPostResponseProps> = ({
     } else if (!bodyToSave) {
       setPostMsg("Please enter some text.");
     } else {
-      await execCreateThreadItem({
+      const { data } = await execCreateThreadItem({
         variables: {
-          userId: user ? user.id : "0",
+          userId: user.id,
           threadId,
           body: bodyToSave,
         },
       });
+
+      if (data && data.createThreadItem.__typename === "EntityResult") {
+        dispatch(
+          createThreadItemAction({
+            id: String(items.threadItems.length + 1),
+            body: bodyToSave,
+            points: 0,
+            user: {
+              id: user.id,
+              userName: user.userName,
+            },
+          })
+        );
+      }
 
       refreshThread && refreshThread();
     }
