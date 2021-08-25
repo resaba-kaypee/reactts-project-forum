@@ -19,14 +19,14 @@ const ChangePassword = gql`
 
 const UserProfile = () => {
   const [
-    { userName, password, passwordConfirm, resultMsg, isSubmitDisable },
+    { userName, password, passwordConfirm, resultMsg, isSubmitDisabled },
     dispatch,
   ] = useReducer(userReducer, {
     userName: "",
     password: "*********",
     passwordConfirm: "*********",
     resultMsg: "",
-    isSubmitDisable: true,
+    isSubmitDisabled: true,
   });
 
   const user = useSelector((state: AppState) => state.user);
@@ -125,7 +125,7 @@ const UserProfile = () => {
             />
             <button
               className="action-btn"
-              disabled={isSubmitDisable}
+              disabled={isSubmitDisabled}
               onClick={onClickChangePassword}>
               Change Password
             </button>
