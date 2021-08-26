@@ -130,10 +130,12 @@ const UserProfile = () => {
               Change Password
             </button>
           </div>
-          <div style={{ marginTop: ".5em" }}>
-            <label>{resultMsg}</label>
-          </div>
         </div>
+        {resultMsg && (
+          <div className="warning-container">
+            <span className="warning">{resultMsg}</span>
+          </div>
+        )}
         <div className="userprofile-postings">
           <hr className="thread-section-divider" />
           <div className="userprofile-threads">
